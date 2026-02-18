@@ -7,12 +7,12 @@
 #include "src/utils/Event.hpp"
 #include "src/states/State.hpp"
 #include "src/states/GameState.hpp"
+#include "src/states/MainMenuState.hpp"
 
 class Game
 {
 private:
 
-    void InitKeys();
     void InitStates();
     void HandleInput();
 
@@ -20,13 +20,12 @@ private:
     int screenHeight;
     
     std::stack<State*> states;
-    std::map<std::string, int> supportedKeys;
 
 public:
     Game();
     ~Game();
 
-    void Update();
+    void Update(float deltaTime);
     void Initialize(int screenWidth, int screenHeight, const char* title);
     void Draw();
 };

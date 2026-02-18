@@ -14,21 +14,20 @@ class State
 private:
 
 protected:
-    virtual void InitKeybinds() = 0;
-
-    std::map<std::string, int>* supportedKeys;
-    std::map<std::string, int> keybinds;
     bool quit;
-
     std::vector<Texture2D> textures;
+    Vector2 mousePosScreen;
+    Vector2 mousePosWindow;
+    Vector2 mousePosView;
     
 public:
-    State(std::map<std::string, int>* supportedKeys);
+    State();
     virtual ~State();
 
-    virtual void Update() = 0;
+    virtual void Update(float deltaTime) = 0;
     virtual void Draw() = 0;
-    virtual void UpdateInputs() = 0;
+    virtual void UpdateMousePositions();
+    virtual void UpdateInputs(float deltaTime) = 0;
     virtual void EndState() = 0;
     virtual void CheckForQuit();
 

@@ -3,6 +3,12 @@
 
 #include "raylib.h"
 
+enum TagsEnum
+{
+    PLAYER,
+    INTERACTABLE,
+};
+
 class Entity
 {
 private:
@@ -10,12 +16,13 @@ private:
 
 protected:
     float speed;
+    TagsEnum tag;
 
 public:
-    Entity(Vector2 position);
+    Entity(Vector2 position, TagsEnum tag);
     virtual ~Entity();
 
-    virtual void Update();
+    virtual void Update(float deltaTime);
     virtual void Draw();
     virtual void Move(const Vector2 direction);
 

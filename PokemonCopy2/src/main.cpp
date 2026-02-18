@@ -13,8 +13,9 @@ int main()
     // Main game loop
     while (!WindowShouldClose())
     {
+        float deltaTime = GetFrameTime();
         // Update
-        game.Update();
+        game.Update(deltaTime);
         
         // Draw
         BeginDrawing();

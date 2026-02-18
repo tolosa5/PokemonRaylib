@@ -7,8 +7,7 @@
 
 Game::Game()
 {
-    InitKeys();
-    InitStates();
+
 }
 
 Game::~Game()
@@ -25,23 +24,16 @@ void Game::Initialize(int width, int height, const char* title)
 {
     screenWidth = width;
     screenHeight = height;
-
     InitWindow(screenWidth, screenHeight, title);
+
     SetTargetFPS(60);
     InitAudioDevice();
-}
-
-void Game::InitKeys()
-{
-    supportedKeys.emplace("A", KEY_A);
-    supportedKeys.emplace("D", KEY_D);
-    supportedKeys.emplace("W", KEY_W);
-    supportedKeys.emplace("S", KEY_S);
-    supportedKeys.emplace("ESCAPE", KEY_ESCAPE);
+    InitStates();
 }
 
 void Game::InitStates()
 {
+    states.push(new MainMenuState());
     states.push(new GameState());
 }
 
@@ -52,11 +44,11 @@ void Game::Draw()
 
 }
 
-void Game::Update()
+void Game::Update(float deltaTime)
 {
     if (!states.empty())
     {
-        states.top()->Update();
+        states.top()->Update(deltaTime);
         if (states.top()->GetQuit())
         {
             states.top()->EndState();
@@ -64,8 +56,6 @@ void Game::Update()
             states.pop();
         }
     }
-    else
-        CloseWindow();
 }
 
 void Game::HandleInput()

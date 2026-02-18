@@ -55,8 +55,8 @@
                 "command": "C:/raylib/w64devkit/bin/mingw32-make.exe",
                 "args": [
                     "RAYLIB_PATH=C:/raylib/raylib",
-                    "PROJECT_NAME=${fileBasenameNoExtension}",
-                    "OBJS=src/*.cpp"
+                    "PROJECT_NAME=game",
+                    "BUILD_MODE=RELEASE"
                 ]
             },
             "osx": {

@@ -6,21 +6,20 @@
 class GameState : public State
 {
 private:
-    void InitKeybinds() override;
 
     Entity player;
 
 protected:
-    std::map<std::string, int>* supportedKeys;
+    
 
 public:
-    GameState(std::map<std::string, int>* supportedKeys);
+    GameState();
     virtual ~GameState();
 
-    void Update() override;
+    void Update(float deltaTime) override;
     void Draw() override;
     
-    void UpdateInputs() override;
+    void UpdateInputs(float deltaTime) override;
     void EndState() override;
     void CheckForQuit() override;
 };

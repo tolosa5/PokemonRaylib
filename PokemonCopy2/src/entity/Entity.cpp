@@ -1,28 +1,29 @@
 #include "Entity.hpp"
 
-Entity::Entity(Vector2 position)
+Entity::Entity(Vector2 position, TagsEnum tag)
 {
     this->position = position;
+    this->tag = tag;
     speed = 2.0f;
 }
 
 Entity::~Entity()
 {
-    UnloadTexture(image);
+    
 }
 
-void Entity::Update()
+void Entity::Update(float deltaTime)
 {
     
 }
 
 void Entity::Draw()
 {
-    DrawTextureV(image, position, WHITE);
+    DrawRectangle((int)position.x, (int)position.y, 32, 32, RED);
 }
 
 void Entity::Move(const Vector2 direction)
 {
-    position.x += direction.x * speed;
-    position.y += direction.y * speed;
+    position.x += direction.x * speed * GetFrameTime();
+    position.y += direction.y * speed * GetFrameTime();
 }
