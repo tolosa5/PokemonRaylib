@@ -13,7 +13,7 @@ protected:
     
 
 public:
-    GameState();
+    GameState(std::stack<State*>* states);
     virtual ~GameState();
 
     void Update(float deltaTime) override;

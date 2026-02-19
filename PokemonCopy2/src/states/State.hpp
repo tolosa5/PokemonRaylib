@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 
+#include "src/utils/Event.hpp"
 #include "src/entity/Entity.hpp"
 
 class State
@@ -19,14 +20,15 @@ protected:
     Vector2 mousePosScreen;
     Vector2 mousePosWindow;
     Vector2 mousePosView;
+
+    std::stack<State*>* states;
     
 public:
-    State();
+    State(std::stack<State*>* states);
     virtual ~State();
 
     virtual void Update(float deltaTime) = 0;
     virtual void Draw() = 0;
-    virtual void UpdateMousePositions();
     virtual void UpdateInputs(float deltaTime) = 0;
     virtual void EndState() = 0;
     virtual void CheckForQuit();

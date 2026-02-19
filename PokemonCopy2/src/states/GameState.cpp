@@ -1,6 +1,8 @@
 #include "src/states/GameState.hpp"
 
-GameState::GameState() : player({100, 100}, PLAYER)
+GameState::GameState(std::stack<State*>* states) : 
+    State(states), 
+    player({100, 100}, TagsEnum::PLAYER)
 {
     
 }

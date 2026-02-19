@@ -7,7 +7,7 @@
 
 Game::Game()
 {
-
+    
 }
 
 Game::~Game()
@@ -22,19 +22,31 @@ Game::~Game()
 
 void Game::Initialize(int width, int height, const char* title)
 {
+    InitializeWindow(width, height, title);
+    
+    InitStates();
+    ImportAssets();
+}
+
+void Game::InitializeWindow(int width, int height, const char* title)
+{
     screenWidth = width;
     screenHeight = height;
-    InitWindow(screenWidth, screenHeight, title);
-
+    InitWindow(width, height, title);
+    
+    MaximizeWindow();
     SetTargetFPS(60);
     InitAudioDevice();
-    InitStates();
+}
+
+void Game::ImportAssets()
+{
+    //assets["player"] = Sprite(LoadTexture("assets/player.png"), {100, 100});
 }
 
 void Game::InitStates()
 {
-    states.push(new MainMenuState());
-    states.push(new GameState());
+    states.push(new MainMenuState(&states));
 }
 
 void Game::Draw()

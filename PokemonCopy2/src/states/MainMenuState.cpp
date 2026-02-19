@@ -1,11 +1,14 @@
 #include "MainMenuState.hpp"
 
-MainMenuState::MainMenuState()
+MainMenuState::MainMenuState(std::stack<State*>* states) : 
+    State(states)
 {
     background.x = 0;
     background.y = 0;
     background.width = GetScreenWidth();
     background.height = GetScreenHeight();
+
+    font = LoadFont("assets/fonts/monogram.ttf");
 
     InitButtons();
 }
@@ -24,15 +27,17 @@ void MainMenuState::InitButtons()
     buttons["GAME_STATE_BUTTON"] = new Button({100, 100, 200, 50}, "Play", &font);
     buttons["GAME_STATE_BUTTON"]->onClick.Subscribe(
         [&]() {
-            OnPlayButtonClick(); });
+            PlayButtonClick(); });
+
+    buttons["EXIT_BUTTON"] = new Button({100, 200, 200, 50}, "Exit", &font);
+    buttons["EXIT_BUTTON"]->onClick.Subscribe(
+        [&]() {
+            ExitButtonClick(); });
 }
 
 void MainMenuState::Update(float deltaTime)
 {
-    for (auto& button : buttons)
-    {
-        button.second->Update(GetMousePosition());
-    }
+    UpdateInputs(deltaTime);
 }
 
 void MainMenuState::Draw()
@@ -49,7 +54,12 @@ void MainMenuState::DrawButtons()
     }
 }
 
-void MainMenuState::OnPlayButtonClick()
+void MainMenuState::PlayButtonClick()
+{
+    states->push(new GameState(states));
+}
+
+void MainMenuState::ExitButtonClick()
 {
     quit = true;
 }
@@ -65,11 +75,5 @@ void MainMenuState::UpdateInputs(float deltaTime)
 
 void MainMenuState::EndState()
 {
-
-}
-
-void MainMenuState::CheckForQuit()
-{
-    if (IsKeyPressed(KEY_ESCAPE))
-        quit = true;
+    quit = true;
 }

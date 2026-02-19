@@ -3,7 +3,7 @@
 
 #include "raylib.h"
 #include <string>
-#include "Event.hpp"
+#include "src/utils/Event.hpp"
 
 enum ButtonState
 {
@@ -19,6 +19,7 @@ private:
     ButtonState state;
 
     Rectangle rect;
+    Texture2D texture;
     Color idleColor;
     Color hoverColor;
     Color activeColor;

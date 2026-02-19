@@ -3,7 +3,7 @@
 
 #include "src/states/State.hpp"
 #include "src/states/GameState.hpp"
-#include "src/core/Button.hpp"
+#include "src/ui/Button.hpp"
 
 class MainMenuState : public State
 {
@@ -18,7 +18,7 @@ protected:
     
 
 public:
-    MainMenuState();
+    MainMenuState(std::stack<State*>* states);
     virtual ~MainMenuState();
 
     void InitButtons();
@@ -27,10 +27,11 @@ public:
 
     void DrawButtons();
     
-    void OnPlayButtonClick();
+    void PlayButtonClick();
+    void ExitButtonClick();
+
     void UpdateInputs(float deltaTime) override;
     void EndState() override;
-    void CheckForQuit() override;
 };
 
 #endif
