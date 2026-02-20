@@ -34,9 +34,10 @@ public:
         Color hoverColor = GRAY, Color activeColor = DARKGRAY);
     ~Button();
     
-    void Update(const Vector2 mousePos);
+    void Update();
     void Draw();
-    bool IsHovered() const;
+    void SetButtonState(ButtonState newState) { state = newState; }
+    bool IsHovered() const { return state == HOVER; };
     const bool IsPressed() const { return state == PRESSED; }
 
     Event<> onClick;

@@ -1,51 +1,77 @@
 #include "src/states/GameState.hpp"
 
-GameState::GameState(std::stack<State*>* states) : 
-    State(states), 
-    player({100, 100}, TagsEnum::PLAYER)
+void GameState::InitTextures()
 {
-    
+    Texture2D playerTexture = LoadTexture("assets/graphics/sprites/player/player.png");
+    textures["PLAYER_IDLE"] = playerTexture;
+    InitPlayer();
+    //player->SetPosition({100, 100});
+}
+
+void GameState::InitPlayer()
+{
+    player = new Player(textures["PLAYER_IDLE"], {100, 100});
+}
+
+GameState::GameState(std::stack<State*>* states) : 
+    State(states)
+{
+    InitTextures();
 }
 
 GameState::~GameState()
 {
-
+    delete player;
 }
 
 void GameState::Update(float deltaTime)
 {
     UpdateInputs(deltaTime);
-    player.Update(deltaTime);
+    player->Update(deltaTime);
 }
 
 void GameState::Draw()
 {
-    player.Draw();
+    player->Draw();
 }
 
 void GameState::UpdateInputs(float deltaTime)
 {
-    CheckForQuit();
-    if (IsKeyDown(KEY_A))
-        player.Move({-1, 0});
+    MovementComponent* playerMovementComponent = player->GetMovementComponent();
 
-    else if (IsKeyDown(KEY_D))
-        player.Move({1, 0});
+    if (playerMovementComponent->moving)
+        return;
 
-    else if (IsKeyDown(KEY_W))
-        player.Move({0, -1});
+    Vector2 dir = {0, 0};
+    playerMovementComponent->direction = dir;
 
-    else if (IsKeyDown(KEY_S))
-        player.Move({0, 1});
-}
+    if (IsKeyPressed(KEY_UP)) 
+    {
+        dir.y = -1;
+        dir.x = 0;
+    }
+    else if (IsKeyPressed(KEY_DOWN))  
+    {
+        dir.y =  1;
+        dir.x = 0;
+    }
+    else if (IsKeyPressed(KEY_LEFT))  
+    {
+        dir.x = -1;
+        dir.y = 0;
+    }
+    else if (IsKeyPressed(KEY_RIGHT)) 
+    {
+        dir.x =  1;
+        dir.y = 0;
+    }
 
-void GameState::EndState()
-{
+    if (dir.x != 0 || dir.y != 0)
+    {
+        player->Move(dir);
+    }
 
-}
-
-void GameState::CheckForQuit()
-{
     if (IsKeyPressed(KEY_ESCAPE))
-        quit = true;
+        EndState();
+    
 }

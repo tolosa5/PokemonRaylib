@@ -8,7 +8,8 @@
 #include <string>
 
 #include "src/utils/Event.hpp"
-#include "src/entity/Entity.hpp"
+#include "src/entity/Player.hpp"
+#include "src/utils/Utils.hpp"
 
 class State
 {
@@ -16,10 +17,7 @@ private:
 
 protected:
     bool quit;
-    std::vector<Texture2D> textures;
-    Vector2 mousePosScreen;
-    Vector2 mousePosWindow;
-    Vector2 mousePosView;
+    std::map<std::string, Texture2D> textures;
 
     std::stack<State*>* states;
     
@@ -30,8 +28,7 @@ public:
     virtual void Update(float deltaTime) = 0;
     virtual void Draw() = 0;
     virtual void UpdateInputs(float deltaTime) = 0;
-    virtual void EndState() = 0;
-    virtual void CheckForQuit();
+    virtual void EndState();
 
     const bool& GetQuit() const { return quit; }
 };

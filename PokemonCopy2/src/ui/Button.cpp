@@ -53,21 +53,26 @@ void Button::Draw()
     DrawTextEx(font, text.c_str(), (Vector2){textX, textY}, fontSize, 0, BLACK);
 }
 
-void Button::Update(Vector2 mousePos)
+void Button::Update()
 {
-    state = IDLE;
-    if (CheckCollisionPointRec(mousePos, rect))
+    if (state == IDLE && IsKeyPressed(KEY_DOWN))
     {
         state = HOVER;
-        if (IsMouseButtonDown(MOUSE_LEFT_BUTTON))
+    }
+    else if (state == HOVER)
+    {
+        if (IsKeyPressed(KEY_UP))
+        {
+            state = IDLE;
+        }
+    }
+    
+    if (state == HOVER)
+    {
+        if (IsKeyPressed(KEY_ENTER))
         {
             state = PRESSED;
             onClick.Invoke();
         }
     }
-}
-
-bool Button::IsHovered() const
-{
-    return state == HOVER;
 }

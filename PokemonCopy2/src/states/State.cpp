@@ -12,8 +12,7 @@ State::~State()
 
 }
 
-void State::CheckForQuit()
+void State::EndState()
 {
-    if (IsKeyPressed(KEY_ESCAPE))
-        quit = true;
+    quit = true;
 }

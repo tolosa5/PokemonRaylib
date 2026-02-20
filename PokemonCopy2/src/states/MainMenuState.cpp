@@ -1,16 +1,15 @@
 #include "MainMenuState.hpp"
+#include "src/ui/ButtonGroup.hpp"
 
 MainMenuState::MainMenuState(std::stack<State*>* states) : 
     State(states)
 {
-    background.x = 0;
-    background.y = 0;
-    background.width = GetScreenWidth();
-    background.height = GetScreenHeight();
-
     font = LoadFont("assets/fonts/monogram.ttf");
 
+    InitBackground();
     InitButtons();
+
+
 }
 
 MainMenuState::~MainMenuState()
@@ -20,6 +19,14 @@ MainMenuState::~MainMenuState()
     {
         delete it->second;
     }
+    delete buttonGroup;
+}
+
+void MainMenuState::InitBackground()
+{
+    backgroundTexture = LoadTexture("assets/graphics/main_menu.png");
+    backgroundTexture.width = GetScreenWidth();
+    backgroundTexture.height = GetScreenHeight();
 }
 
 void MainMenuState::InitButtons()
@@ -29,10 +36,21 @@ void MainMenuState::InitButtons()
         [&]() {
             PlayButtonClick(); });
 
+    buttons["GAME_STATE_BUTTON"]->SetButtonState(HOVER);
+
+    buttons["SETTINGS_BUTTON"] = new Button({100, 150, 200, 50}, "Settings", &font);
+
     buttons["EXIT_BUTTON"] = new Button({100, 200, 200, 50}, "Exit", &font);
     buttons["EXIT_BUTTON"]->onClick.Subscribe(
         [&]() {
             ExitButtonClick(); });
+            
+    for (const auto& button : buttons)
+    {
+        buttonVector.push_back(button.second);
+    }
+
+    buttonGroup = new ButtonGroup(buttonVector, VERTICAL);
 }
 
 void MainMenuState::Update(float deltaTime)
@@ -42,7 +60,7 @@ void MainMenuState::Update(float deltaTime)
 
 void MainMenuState::Draw()
 {
-    DrawRectangleRec(background, DARKGRAY);
+    DrawTexture(backgroundTexture, 0, 0, WHITE);
     DrawButtons();
 }
 
@@ -66,14 +84,11 @@ void MainMenuState::ExitButtonClick()
 
 void MainMenuState::UpdateInputs(float deltaTime)
 {
-    CheckForQuit();
     for (const auto& button : buttons)
     {
-        button.second->Update(GetMousePosition());
+        button.second->Update();
     }
-}
 
-void MainMenuState::EndState()
-{
-    quit = true;
+    if (IsKeyPressed(KEY_ESCAPE))
+        EndState();
 }
