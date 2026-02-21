@@ -12,58 +12,70 @@ private:
     class Animation
     {
     public:
-        Texture2D textureSheet;
+        Sprite& sprite;
+        Texture2D& textureSheet;
         Rectangle startRect;
+        Rectangle currentRect;
         Rectangle endRect;
         float animationTimer;
         float timer;
         int width;
         int height;
 
-        Animation(Texture2D& textureSheet, Rectangle startRect, 
-            Rectangle endRect, float speed) : 
-            textureSheet(textureSheet), animationTimer(speed), 
+        Animation(Sprite& sprite, Texture2D& textureSheet, Rectangle startRect, 
+            Rectangle currentRect, Rectangle endRect, float animationTimer) : 
+            sprite(sprite), textureSheet(textureSheet), 
+            animationTimer(animationTimer), 
             width(startRect.width), height(startRect.height)
         {
             this->width = startRect.width;
             this->height = startRect.height;
             this->startRect = startRect;
+            this->currentRect = currentRect;
             this->endRect = endRect;
-            this->animationTimer = speed;
+            this->animationTimer = animationTimer;
+
+            this->sprite.texture = textureSheet;
+            this->sprite.position = {startRect.x, startRect.y};
         }
 
-        void Update(float deltaTime)
+        void Play(float deltaTime)
         {
             timer = 10.0f;
             if(timer >= animationTimer)
             {
-                if (startRect.x < endRect.x)
-                    startRect.x += width;
+                timer = 0.0f;
+                if(currentRect.x < endRect.x)
+                    currentRect.x += width;
                 else
-                    startRect.x = 0.0f;
+                    currentRect.x = startRect.x;
             }
-            else
-                timer += deltaTime;
         };
         
-        void Play(float deltaTime);
         void Pause();
-        void Reset();
+        void Reset()
+        {
+            timer = 0.0f;
+            currentRect = startRect;
+        }
     };
     
     Texture2D& textureSheet;
     Sprite& sprite;
     std::map<std::string, Animation*> animations;
-    Animation* currentAnimation;
 
 public:
     AnimationComponent(Sprite& sprite, Texture2D& textureSheet);
     virtual ~AnimationComponent();
 
-    void Animate();
-    void Update();
+    void AddAnimation(std::string key, float animationTimer, 
+        Rectangle startRect, Rectangle currentRect, Rectangle endRect);
 
-    Sprite& sprite;
+    void StartAnimation(std::string animation);
+    void StopAnimation(std::string animation);
+    void ResetAnimation(std::string animation);
+
+    void Play(const std::string key);
 };
 
 #endif
