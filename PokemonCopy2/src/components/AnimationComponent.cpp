@@ -1,7 +1,9 @@
 #include "AnimationComponent.hpp"
 
-AnimationComponent::AnimationComponent(Sprite &sprite, Texture2D& textureSheet)
-    : sprite(sprite), textureSheet(textureSheet)
+AnimationComponent::AnimationComponent(Texture2D& textureSheet, 
+    int frameWidth, int frameHeight)
+    : textureSheet(textureSheet), 
+    frameWidth(frameWidth), frameHeight(frameHeight)
 {
     
 }
@@ -11,32 +13,54 @@ AnimationComponent::~AnimationComponent()
 
 }
 
-void AnimationComponent::AddAnimation(std::string key, float animationTimer, 
-    Rectangle startRect, Rectangle currentRect, Rectangle endRect)
+void AnimationComponent::AddAnimation(const std::string key, int row, 
+    int frameCount, float frameTime)
 {
-    animations[key] = new Animation(sprite, textureSheet, startRect, 
-        currentRect, endRect, animationTimer);
+    animations[key] = {frameCount, frameTime, row};
 }
 
-void AnimationComponent::StartAnimation(std::string animation)
+void AnimationComponent::ChangeSpriteSheet(Texture2D& newTexture)
 {
-    animations[animation]->Play(0.0f);
-}
-
-void AnimationComponent::StopAnimation(std::string animation)
-{
-    animations[animation]->Pause();
-}
-
-void AnimationComponent::ResetAnimation(std::string animation)
-{
-    animations[animation]->Reset();
+    textureSheet = newTexture;
 }
 
 void AnimationComponent::Play(const std::string key)
 {
-    if (animations.find(key) != animations.end())
+    if (currentAnimationKey == key)
+        return;
+
+    currentAnimationKey = key;
+    currentFrame = 0;
+    animationTimer = 0.0f;
+}
+
+void AnimationComponent::StopAnimation(std::string animation)
+{
+    if (currentAnimationKey == animation)
     {
-        animations[key]->Play(GetFrameTime());
+        currentAnimationKey = "";
+        currentFrame = 0;
+        animationTimer = 0.0f;
     }
+}
+
+void AnimationComponent::ResetAnimation(std::string animation)
+{
+    if (currentAnimationKey == animation)
+    {
+        currentFrame = 0;
+        animationTimer = 0.0f;
+    }
+}
+
+Rectangle AnimationComponent::GetSourceRect() const
+{
+    if (currentAnimationKey.empty())
+        return {0, 0, (float)frameWidth, (float)frameHeight};
+
+    const Animation& anim = animations.at(currentAnimationKey);
+    return {(float)(currentFrame * frameWidth), 
+        (float)(anim.row * frameHeight), 
+        (float)frameWidth, 
+        (float)frameHeight};
 }

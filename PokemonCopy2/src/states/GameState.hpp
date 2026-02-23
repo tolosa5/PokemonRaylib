@@ -2,6 +2,7 @@
 #define GAMESTATE_HPP
 
 #include "src/states/State.hpp"
+#include <iostream>
 
 struct Tile
 {

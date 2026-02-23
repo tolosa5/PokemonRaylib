@@ -2,15 +2,14 @@
 
 void GameState::InitTextures()
 {
-    Texture2D playerTexture = LoadTexture("assets/graphics/sprites/player/player.png");
-    textures["PLAYER_IDLE"] = playerTexture;
+    Texture2D playerTexture = LoadTexture("assets/graphics/sprites/player/PlayerSheet.png");
+    textures["PLAYER_SHEET"] = playerTexture;
     InitPlayer();
-    //player->SetPosition({100, 100});
 }
 
 void GameState::InitPlayer()
 {
-    player = new Player(textures["PLAYER_IDLE"], {100, 100});
+    player = new Player(textures["PLAYER_SHEET"], {100, 100});
 }
 
 GameState::GameState(std::stack<State*>* states) : 
@@ -45,33 +44,33 @@ void GameState::UpdateInputs(float deltaTime)
     Vector2 dir = {0, 0};
     playerMovementComponent->direction = dir;
 
-    if (IsKeyPressed(KEY_UP)) 
+    if (IsKeyDown(KEY_W)) 
     {
         dir.y = -1;
         dir.x = 0;
     }
-    else if (IsKeyPressed(KEY_DOWN))  
+    if (IsKeyDown(KEY_S))  
     {
-        dir.y =  1;
+        dir.y = 1;
         dir.x = 0;
     }
-    else if (IsKeyPressed(KEY_LEFT))  
+    if (IsKeyDown(KEY_A))  
     {
         dir.x = -1;
         dir.y = 0;
     }
-    else if (IsKeyPressed(KEY_RIGHT)) 
+    if (IsKeyDown(KEY_D)) 
     {
-        dir.x =  1;
+        dir.x = 1;
         dir.y = 0;
     }
 
     if (dir.x != 0 || dir.y != 0)
     {
         player->Move(dir);
+        playerMovementComponent->lastDirection = dir;
     }
 
     if (IsKeyPressed(KEY_ESCAPE))
         EndState();
-    
 }

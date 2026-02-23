@@ -18,9 +18,11 @@ public:
     void Update();
 
     const Vector2& GetDirection() const { return direction; }
+    const bool IsIdle() const { return direction.x == 0 && direction.y == 0; }
     
     float maxSpeed;
     Vector2 direction;
+    Vector2 lastDirection;
     Vector2 currentPos;
     Vector2 targetPos;
     bool moving = false;

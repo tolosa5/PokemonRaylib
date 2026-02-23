@@ -7,7 +7,7 @@ public:
     static Color YellowColor () { return {243, 216, 63, 255}; }
     static Color GreyBgColor() { return {30, 30, 30, 255}; }
     
-    static int TILE_SIZE() { return 16; }
+    static int TILE_SIZE() { return 32; }
     static int PixelSize() { return 3; }
     static int GetOffset() { return 50; }
 

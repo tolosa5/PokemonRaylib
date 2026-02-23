@@ -3,6 +3,8 @@
 
 #include "raylib.h"
 
+class AnimationComponent;
+
 class Sprite 
 {
 protected:
@@ -13,8 +15,8 @@ public:
         float rotation = 0.0f, Color tint = WHITE);
     ~Sprite();
     
-    void Draw();
-    void Update(float deltaTime);
+    void Draw(AnimationComponent& animComp, Vector2 position, float scale);
+    void Update(AnimationComponent& animationComponent);
     void Move(Vector2 direction);
 
     Texture2D texture;

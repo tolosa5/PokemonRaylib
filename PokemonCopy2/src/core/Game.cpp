@@ -46,7 +46,7 @@ void Game::ImportAssets()
 
 void Game::InitStates()
 {
-    states.push(new MainMenuState(&states));
+    states.push(new GameState(&states));
 }
 
 void Game::Draw()

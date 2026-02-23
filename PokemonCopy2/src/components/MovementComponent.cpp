@@ -39,6 +39,5 @@ void MovementComponent::Move(const Vector2 direction)
 
 void MovementComponent::Update()
 {
-    if (&sprite)
-        sprite.position = currentPos;
+    sprite.position = currentPos;
 }

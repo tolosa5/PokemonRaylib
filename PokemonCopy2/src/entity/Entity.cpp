@@ -3,11 +3,13 @@
 Entity::Entity()
 {
     movementComponent = nullptr;
+    animationComponent = nullptr;
 }
 
 Entity::~Entity()
 {
     delete movementComponent;
+    delete animationComponent;
 }
 
 void Entity::SetSpriteTexture(Texture2D& texture)
@@ -20,23 +22,39 @@ void Entity::CreateMovementComponent(const float maxSpeed)
     movementComponent = new MovementComponent(sprite, maxSpeed);
 }
 
+void Entity::CreateAnimationComponent(
+    Texture2D& textureSheet, int frameWidth, int frameHeight)
+{
+    animationComponent = new AnimationComponent(
+        textureSheet, frameWidth, frameHeight);
+}
+
 void Entity::Update(float deltaTime)
 {
-    sprite.Update(deltaTime);
+    movementComponent->Update();
+    movementComponent->Move(movementComponent->direction);
+    sprite.Update(*animationComponent);
 }
 
 void Entity::Draw()
 {
-    sprite.Draw();
+    sprite.Draw(*animationComponent, sprite.position, 2);
 }
 
 void Entity::SetPosition(const Vector2 position)
 {
     sprite.position = position;
+    if (movementComponent)
+    {
+        movementComponent->currentPos = position;
+        movementComponent->targetPos = position;
+        movementComponent->moving = false;
+    }
 }
 
 void Entity::Move(const Vector2 direction)
 {
+    //movementComponent->Move(direction);
     if (&sprite && movementComponent)
     {
         movementComponent->direction = direction;

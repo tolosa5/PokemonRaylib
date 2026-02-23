@@ -8,7 +8,7 @@ class Player : public Entity
 {
 private:
     void InitVariables();
-    void InitComponents();
+    void InitComponents(Texture2D& texture);
 
 public:
     Player(Texture2D& texture, Vector2 position);
@@ -16,8 +16,10 @@ public:
 
     void Update(float deltaTime) override;
     void Draw() override;
+    void LoadAnimations();
 
-    MovementComponent* GetMovementComponent() const { return movementComponent; }
+    MovementComponent* GetMovementComponent() const { 
+        return movementComponent; }
 };
 
 #endif

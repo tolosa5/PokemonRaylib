@@ -5,6 +5,7 @@
 #include "src/components/MovementComponent.hpp"
 #include "src/components/AnimationComponent.hpp"
 #include "src/components/Sprite.hpp"
+#include "src/utils/AnimationSystem.hpp"
 #include "src/utils/Utils.hpp"
 
 enum TagsEnum
@@ -30,7 +31,8 @@ public:
 
     void SetSpriteTexture(Texture2D& texture);
     void CreateMovementComponent(const float maxSpeed);
-    void CreateAnimationComponent();
+    void CreateAnimationComponent(Texture2D& textureSheet, 
+        int frameWidth, int frameHeight);
 
     virtual void Update(float deltaTime);
     virtual void Draw();
