@@ -17,7 +17,7 @@ Button::Button(Rectangle rect, const std::string& text,
 
 Button::~Button()
 {
-
+    
 }
 
 void Button::Draw()
@@ -55,18 +55,6 @@ void Button::Draw()
 
 void Button::Update()
 {
-    if (state == IDLE && IsKeyPressed(KEY_DOWN))
-    {
-        state = HOVER;
-    }
-    else if (state == HOVER)
-    {
-        if (IsKeyPressed(KEY_UP))
-        {
-            state = IDLE;
-        }
-    }
-    
     if (state == HOVER)
     {
         if (IsKeyPressed(KEY_ENTER))

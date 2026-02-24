@@ -7,6 +7,8 @@
 class Player : public Entity
 {
 private:
+    bool isRunning;
+
     void InitVariables();
     void InitComponents(Texture2D& texture);
 
@@ -17,6 +19,9 @@ public:
     void Update(float deltaTime) override;
     void Draw() override;
     void LoadAnimations();
+    void Interact();
+    void OpenMenu();
+    void ToggleRun() { isRunning = !isRunning; }
 
     MovementComponent* GetMovementComponent() const { 
         return movementComponent; }

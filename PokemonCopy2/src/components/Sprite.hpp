@@ -11,7 +11,7 @@ protected:
     
 
 public:
-    Sprite(Vector2 position = {0, 0}, Vector2 scale = {1, 1}, 
+    Sprite(Vector2 position = {0, 0}, Vector2 size = {1, 1}, 
         float rotation = 0.0f, Color tint = WHITE);
     ~Sprite();
     
@@ -21,7 +21,7 @@ public:
 
     Texture2D texture;
     Vector2 position;
-    Vector2 scale;
+    Vector2 size;
     float rotation;
     Color tint;
 };

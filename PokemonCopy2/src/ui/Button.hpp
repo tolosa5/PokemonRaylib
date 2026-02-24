@@ -39,6 +39,7 @@ public:
     void SetButtonState(ButtonState newState) { state = newState; }
     bool IsHovered() const { return state == HOVER; };
     const bool IsPressed() const { return state == PRESSED; }
+    const Rectangle& GetRect() const { return rect; }
 
     Event<> onClick;
 };

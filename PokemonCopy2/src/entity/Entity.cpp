@@ -4,12 +4,14 @@ Entity::Entity()
 {
     movementComponent = nullptr;
     animationComponent = nullptr;
+    colliderComponent = nullptr;
 }
 
 Entity::~Entity()
 {
     delete movementComponent;
     delete animationComponent;
+    delete colliderComponent;
 }
 
 void Entity::SetSpriteTexture(Texture2D& texture)
@@ -29,16 +31,26 @@ void Entity::CreateAnimationComponent(
         textureSheet, frameWidth, frameHeight);
 }
 
+void Entity::CreateColliderComponent(Sprite& sprite)
+{
+    colliderComponent = new ColliderComponent(
+        sprite, {32, 32}, {0, 0});
+}
+
 void Entity::Update(float deltaTime)
 {
     movementComponent->Update();
     movementComponent->Move(movementComponent->direction);
     sprite.Update(*animationComponent);
+    if (colliderComponent)
+        colliderComponent->Update(sprite.position);
 }
 
 void Entity::Draw()
 {
     sprite.Draw(*animationComponent, sprite.position, 2);
+    if (colliderComponent)
+        colliderComponent->Draw();
 }
 
 void Entity::SetPosition(const Vector2 position)
@@ -54,7 +66,6 @@ void Entity::SetPosition(const Vector2 position)
 
 void Entity::Move(const Vector2 direction)
 {
-    //movementComponent->Move(direction);
     if (&sprite && movementComponent)
     {
         movementComponent->direction = direction;

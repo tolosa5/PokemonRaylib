@@ -1,10 +1,10 @@
 #include "Sprite.hpp"
 #include "src/components/AnimationComponent.hpp"
 
-Sprite::Sprite(Vector2 position, Vector2 scale, float rotation, Color tint)
+Sprite::Sprite(Vector2 position, Vector2 size, float rotation, Color tint)
 {
     this->position = position;
-    this->scale = scale;
+    this->size = size;
     this->rotation = rotation;
     this->tint = tint;
 }
@@ -17,12 +17,13 @@ Sprite::~Sprite()
 void Sprite::Draw(AnimationComponent& animComp, Vector2 position, float scale)
 {
     Rectangle sourceRect = animComp.GetSourceRect();
+    size = { sourceRect.width, sourceRect.height };
     
     Rectangle destRect = 
     {
         position.x, 
         position.y, 
-        sourceRect.width * scale, 
+        sourceRect.width * scale,
         sourceRect.height * scale
     };
     

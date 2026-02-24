@@ -9,6 +9,7 @@ void Player::InitComponents(Texture2D& texture)
 {
     CreateMovementComponent(200.0f);
     CreateAnimationComponent(texture, 16, 16);
+    CreateColliderComponent(sprite);
 }
 
 Player::Player(Texture2D& texture, Vector2 position)
@@ -30,6 +31,7 @@ Player::~Player()
 void Player::Update(float deltaTime)
 {
     Entity::Update(deltaTime);
+    
     if (movementComponent->IsIdle())
     {
         if (movementComponent->lastDirection.x == 0 && 
@@ -84,4 +86,12 @@ void Player::LoadAnimations()
     animationComponent->AddAnimation("IDLE_UP", 5, 1, 0.2f);
     animationComponent->AddAnimation("IDLE_LEFT", 6, 1, 0.2f);
     animationComponent->AddAnimation("IDLE_RIGHT", 7, 1, 0.2f);
+}
+
+void Player::Interact()
+{
+}
+
+void Player::OpenMenu()
+{
 }

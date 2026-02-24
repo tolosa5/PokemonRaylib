@@ -2,21 +2,15 @@
 #define GAMESTATE_HPP
 
 #include "src/states/State.hpp"
-#include <iostream>
+#include "src/managers/InputManager.hpp"
 
-struct Tile
-{
-    int id;
-    bool solid;
-    int height;
-    bool interactable;
-};
 
 class GameState : public State
 {
 private:
 
     Player* player;
+    InputManager inputManager;
 
 protected:
     
@@ -31,6 +25,8 @@ public:
     void Draw() override;
     
     void UpdateInputs(float deltaTime) override;
+    void UpdateGameplayInputs(float deltaTime);
+    void UpdateUIInputs(float deltaTime);
 };
 
 #endif

@@ -12,20 +12,37 @@ enum GroupMode
 {
     VERTICAL,
     HORIZONTAL,
+    GRID
 };
 
 class ButtonGroup
 {
 private:
     GroupMode mode;
+    Button* hoveredButton;
+
+    float leftMargin = 0;
+    float rightMargin = 0;
+    float topMargin = 0;
+    float bottomMargin = 0;
+
+    int rows;
+    int columns;
 
 public:
     ButtonGroup(std::vector<Button*>& buttons, GroupMode mode);
+    ButtonGroup(std::vector<Button*>& buttons, 
+        GroupMode mode, int rows, int columns);
     ~ButtonGroup() = default;
 
     void Update();
     void Draw();
+    void GridSetup();
     void ButtonsIteration();
+    void VerticalIteration();
+    void HorizontalIteration();
+    void GridIteration();
+    void HoverButton(int index);
     Button *GetHoveredButton() const;
     GroupMode GetGroupMode() const { return mode; }
 

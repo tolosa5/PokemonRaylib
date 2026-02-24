@@ -10,20 +10,12 @@ enum InputMode
 class InputManager
 {
 private:
-    // Private constructor for singleton pattern
-    InputManager() {}
+    static InputMode currentMode;
 
 public:
-    // Delete copy constructor and assignment operator
-    InputManager(const InputManager&) = delete;
-    InputManager& operator=(const InputManager&) = delete;
-
-    // Static method to get the singleton instance
-    static InputManager& GetInstance()
-    {
-        static InputManager instance; // Guaranteed to be destroyed and instantiated on first use
-        return instance;
-    }
+    InputManager() = default;
+    static InputMode GetCurrentMode() { return currentMode; }
+    static void SetCurrentMode(InputMode mode) { currentMode = mode; }
 };
 
 #endif

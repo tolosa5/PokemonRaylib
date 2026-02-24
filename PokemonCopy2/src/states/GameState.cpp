@@ -36,41 +36,66 @@ void GameState::Draw()
 
 void GameState::UpdateInputs(float deltaTime)
 {
+    switch (inputManager.GetCurrentMode())
+    {
+    default:
+    case GAMEPLAY:
+        UpdateGameplayInputs(deltaTime);
+        break;
+    case UI:
+        UpdateUIInputs(deltaTime);
+        break;
+        break;
+    }
+}
+
+void GameState::UpdateGameplayInputs(float deltaTime)
+{
+    if (IsKeyPressed(KEY_C))
+    player->Interact();
+    
+    if (IsKeyPressed(KEY_D))
+    player->OpenMenu();
+    
+    if (IsKeyPressed(KEY_X))
+    player->ToggleRun();
+    
+    if (IsKeyPressed(KEY_ESCAPE))
+    EndState();
+    
     MovementComponent* playerMovementComponent = player->GetMovementComponent();
-
     if (playerMovementComponent->moving)
-        return;
-
+    return;
+    
     Vector2 dir = {0, 0};
     playerMovementComponent->direction = dir;
 
-    if (IsKeyDown(KEY_W)) 
+    if (IsKeyDown(KEY_UP)) 
     {
-        dir.y = -1;
-        dir.x = 0;
+        dir = {0, -1};
+        player->Move(dir);
     }
-    if (IsKeyDown(KEY_S))  
+    else if (IsKeyDown(KEY_DOWN))  
     {
-        dir.y = 1;
-        dir.x = 0;
+        dir = {0, 1};
+        player->Move(dir);
     }
-    if (IsKeyDown(KEY_A))  
+    else if (IsKeyDown(KEY_LEFT))  
     {
-        dir.x = -1;
-        dir.y = 0;
+        dir = {-1, 0};
+        player->Move(dir);
     }
-    if (IsKeyDown(KEY_D)) 
+    else if (IsKeyDown(KEY_RIGHT)) 
     {
-        dir.x = 1;
-        dir.y = 0;
+        dir = {1, 0};
+        player->Move(dir);
     }
 
     if (dir.x != 0 || dir.y != 0)
-    {
-        player->Move(dir);
         playerMovementComponent->lastDirection = dir;
-    }
+}
 
-    if (IsKeyPressed(KEY_ESCAPE))
-        EndState();
+void GameState::UpdateUIInputs(float deltaTime)
+{
+    // Handle UI-specific inputs here
 }

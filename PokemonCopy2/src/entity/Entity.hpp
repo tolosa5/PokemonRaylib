@@ -4,15 +4,11 @@
 #include "raylib.h"
 #include "src/components/MovementComponent.hpp"
 #include "src/components/AnimationComponent.hpp"
+#include "src/components/ColliderComponent.hpp"
 #include "src/components/Sprite.hpp"
 #include "src/utils/AnimationSystem.hpp"
 #include "src/utils/Utils.hpp"
 
-enum TagsEnum
-{
-    PLAYER,
-    INTERACTABLE,
-};
 
 class Entity
 {
@@ -23,7 +19,7 @@ protected:
 
     MovementComponent* movementComponent;
     AnimationComponent* animationComponent;
-    TagsEnum tag;
+    ColliderComponent* colliderComponent;
 
 public:
     Entity();
@@ -33,6 +29,7 @@ public:
     void CreateMovementComponent(const float maxSpeed);
     void CreateAnimationComponent(Texture2D& textureSheet, 
         int frameWidth, int frameHeight);
+    void CreateColliderComponent(Sprite& sprite);
 
     virtual void Update(float deltaTime);
     virtual void Draw();

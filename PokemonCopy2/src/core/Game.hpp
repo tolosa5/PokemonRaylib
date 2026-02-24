@@ -8,7 +8,6 @@
 #include "src/states/State.hpp"
 #include "src/states/GameState.hpp"
 #include "src/states/MainMenuState.hpp"
-#include "src/core/Game.hpp"
 #include "src/components/Sprite.hpp"
 #include "src/managers/InputManager.hpp"
 
@@ -24,8 +23,7 @@ private:
     int screenWidth;
     int screenHeight;
 
-    InputManager& inputManager = InputManager::GetInstance();
-    InputMode currentInputMode;
+    InputMode currentInputMode = GAMEPLAY;
     
     std::stack<State*> states;
     std::map<std::string, Sprite> assets;
