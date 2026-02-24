@@ -25,6 +25,7 @@ private:
 
     InputMode currentInputMode = GAMEPLAY;
     
+    
     std::stack<State*> states;
     std::map<std::string, Sprite> assets;
 

@@ -50,7 +50,7 @@ void MainMenuState::InitButtons()
         buttonVector.push_back(button.second);
     }
 
-    buttonGroup = new ButtonGroup(buttonVector, VERTICAL);
+    buttonGroup = new ButtonGroup(buttonVector, VERTICAL, 0, 0);
 }
 
 void MainMenuState::Update(float deltaTime)

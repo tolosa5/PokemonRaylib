@@ -19,7 +19,8 @@ private:
     ButtonState state;
 
     Rectangle rect;
-    Texture2D texture;
+    Texture2D baseTexture;
+    Texture2D hoverTexture;
     Color idleColor;
     Color hoverColor;
     Color activeColor;
@@ -34,6 +35,7 @@ public:
         Color hoverColor = GRAY, Color activeColor = DARKGRAY);
     ~Button();
     
+    void InitTextures();
     void Update();
     void Draw();
     void SetButtonState(ButtonState newState) { state = newState; }

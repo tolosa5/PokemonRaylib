@@ -50,6 +50,7 @@ void Player::Update(float deltaTime)
             movementComponent->lastDirection.y == 0)
             animationComponent->Play("IDLE_RIGHT");
     }
+    
     else
     {
         if (movementComponent->direction.x == 0 && 

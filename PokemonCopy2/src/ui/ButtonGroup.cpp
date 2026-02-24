@@ -1,10 +1,5 @@
 #include "ButtonGroup.hpp"
 
-ButtonGroup::ButtonGroup(std::vector<Button*>& buttons, GroupMode mode)
-    : ButtonGroup(buttons, mode, 1, 1)
-{
-}
-
 ButtonGroup::ButtonGroup(std::vector<Button*>& buttons, 
     GroupMode mode, int rows, int columns) 
     : buttons(buttons), rows(rows), columns(columns)

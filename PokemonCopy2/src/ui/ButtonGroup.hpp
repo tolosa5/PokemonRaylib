@@ -30,9 +30,8 @@ private:
     int columns;
 
 public:
-    ButtonGroup(std::vector<Button*>& buttons, GroupMode mode);
-    ButtonGroup(std::vector<Button*>& buttons, 
-        GroupMode mode, int rows, int columns);
+    ButtonGroup(std::vector<Button*>& buttons,
+        GroupMode mode, int rows = 0, int columns = 0);
     ~ButtonGroup() = default;
 
     void Update();
