@@ -1,7 +1,7 @@
 #ifndef POKEDEXPANEL_HPP
 #define POKEDEXPANEL_HPP
 
-#include "src/ui/PausePanels/Panel.hpp"
+#include "Panel.hpp"
 
 class PokedexPanel : public Panel
 {

@@ -8,6 +8,10 @@
 #include "src/ui/PausePanels/Panel.hpp"
 #include "src/ui/PausePanels/PokedexPanel.hpp"
 #include "src/ui/PausePanels/PokemonPanel.hpp"
+//#include "src/ui/PausePanels/BagPanel.hpp"
+//#include "src/ui/PausePanels/CarnetPanel.hpp"
+//#include "src/ui/PausePanels/SavePanel.hpp"
+#include "src/ui/PausePanels/SettingsPanel.hpp"
 
 class PauseMenu
 {
@@ -24,12 +28,14 @@ private:
 
     void InitPanels();
     void InitButtons();
+    void InitTextures();
     void PokedexButtonClick();
     void PokemonButtonClick();
     void BagButtonClick();
     void CarnetButtonClick();
     void SaveButtonClick();
     void SettingsButtonClick();
+    bool AnyPanelActive();
 public:
     PauseMenu(Font& font);
     virtual ~PauseMenu();

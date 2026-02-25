@@ -128,13 +128,17 @@ void GameState::UpdateUIInputs(float deltaTime)
     pauseMenu->UpdateInputs();
     if (IsKeyPressed(KEY_X))
         ClosePauseMenu();
-    
 }
 
 void GameState::OpenPauseMenu()
 {
-    inputManager.SetCurrentMode(UI);
-    isPaused = true;
+    if (isPaused)
+        ClosePauseMenu();
+    else
+    {
+        inputManager.SetCurrentMode(UI);
+        isPaused = true;
+    }
 }
 
 void GameState::ClosePauseMenu()

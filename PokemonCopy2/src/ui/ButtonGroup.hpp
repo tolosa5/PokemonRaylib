@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "../utils/Event.hpp"
+#include "src/managers/InputManager.hpp"
 #include "Button.hpp"
 
 enum GroupMode
@@ -20,6 +21,7 @@ class ButtonGroup
 private:
     GroupMode mode;
     Button* hoveredButton;
+    InputManager inputManager;
 
     float leftMargin = 0;
     float rightMargin = 0;

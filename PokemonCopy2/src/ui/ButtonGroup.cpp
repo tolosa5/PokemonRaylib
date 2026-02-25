@@ -6,11 +6,15 @@ ButtonGroup::ButtonGroup(std::vector<Button*>& buttons,
 {
     this->mode = mode;
     HoverButton(0);
+    GridSetup();
 }
 
 void ButtonGroup::Update()
 {
-    
+    if (inputManager.GetCurrentMode() == GAMEPLAY)
+        return;
+
+    ButtonsIteration();
 }
 
 void ButtonGroup::Draw()
@@ -69,7 +73,6 @@ void ButtonGroup::ButtonsIteration()
 
         case GRID:
         {
-            GridSetup();
             GridIteration();
             break;
         }

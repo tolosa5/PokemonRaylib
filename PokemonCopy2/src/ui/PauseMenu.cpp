@@ -8,7 +8,7 @@ void PauseMenu::InitPanels()
     panels["BAG"] = new Panel();
     panels["CARNET"] = new Panel();
     panels["SAVE"] = new Panel();
-    panels["SETTINGS"] = new Panel();
+    panels["SETTINGS"] = new SettingsPanel(font);
     */
 }
 
@@ -51,12 +51,18 @@ void PauseMenu::InitButtons()
     buttonGroup = new ButtonGroup(buttonVector, VERTICAL);
 }
 
+void PauseMenu::InitTextures()
+{
+    backgroundTexture = LoadTexture("assets/graphics/ui/PauseMenu.png");
+}
+
 PauseMenu::PauseMenu(Font& font) 
     : font(font)
 {
     menuPanel = { 900, 0, 380, 720 };
     InitPanels();
     InitButtons();
+    InitTextures();
 }
 
 PauseMenu::~PauseMenu()
@@ -73,6 +79,9 @@ PauseMenu::~PauseMenu()
 
 void PauseMenu::Update()
 {
+    if (AnyPanelActive())
+        return;
+    
     for (auto& panel : panels)
     {
         panel.second->Update();
@@ -81,12 +90,20 @@ void PauseMenu::Update()
 
 void PauseMenu::UpdateInputs()
 {
+    if (AnyPanelActive())
+        return;
+
     buttonGroup->Update();
 }
 
 void PauseMenu::Draw()
 {
-    DrawTextureRec(backgroundTexture, menuPanel, { menuPanel.x, menuPanel.y }, WHITE);
+    if (AnyPanelActive())
+        return;
+
+    DrawTextureRec(backgroundTexture, menuPanel, 
+        { menuPanel.x, menuPanel.y }, WHITE);
+
     for (auto& panel : panels)
     {
         panel.second->Draw();
@@ -98,32 +115,44 @@ void PauseMenu::Draw()
 
 void PauseMenu::PokedexButtonClick()
 {
-
+    panels["POKEDEX"]->SetActive(true);
 }
 
 void PauseMenu::PokemonButtonClick()
 {
-
+    panels["POKEMON"]->SetActive(true);
 }
 
 void PauseMenu::BagButtonClick()
 {
-
+    panels["BAG"]->SetActive(true);
 }
 
 void PauseMenu::CarnetButtonClick()
 {
-
+    panels["CARNET"]->SetActive(true);
 }
 
 void PauseMenu::SaveButtonClick()
 {
-
+    panels["SAVE"]->SetActive(true);
 }
 
 void PauseMenu::SettingsButtonClick()
 {
-
+    panels["SETTINGS"]->SetActive(true);
 }
 
 #pragma endregion
+
+bool PauseMenu::AnyPanelActive()
+{
+    for (auto& panel : panels)
+    {
+        if (panel.second->IsActive())
+        {
+            return true;
+        }
+    }
+    return false;
+}
