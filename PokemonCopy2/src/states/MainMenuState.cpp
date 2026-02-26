@@ -1,15 +1,14 @@
 #include "MainMenuState.hpp"
 #include "src/ui/ButtonGroup.hpp"
 
-MainMenuState::MainMenuState(std::stack<State*>* states) : 
-    State(states)
+MainMenuState::MainMenuState(std::stack<State*>* states, float gridSize) : 
+    State(states, gridSize)
 {
     font = LoadFont("assets/fonts/monogram.ttf");
 
     InitBackground();
     InitButtons();
-
-
+    InputManager::SetCurrentMode(UI);
 }
 
 MainMenuState::~MainMenuState()
@@ -35,27 +34,30 @@ void MainMenuState::InitButtons()
     buttons["GAME_STATE_BUTTON"]->onClick.Subscribe(
         [&]() {
             PlayButtonClick(); });
-
-    buttons["GAME_STATE_BUTTON"]->SetButtonState(HOVER);
+    buttonVector.push_back(buttons["GAME_STATE_BUTTON"]);
 
     buttons["SETTINGS_BUTTON"] = new Button({100, 150, 200, 50}, "Settings", &font);
+    buttonVector.push_back(buttons["SETTINGS_BUTTON"]);
+    
+    buttons["EDITOR_BUTTON"] = new Button({100, 200, 200, 50}, "Editor", &font);
+    buttons["EDITOR_BUTTON"]->onClick.Subscribe(
+        [&]() {
+            EditorButtonClick(); });
+    buttonVector.push_back(buttons["EDITOR_BUTTON"]);
 
-    buttons["EXIT_BUTTON"] = new Button({100, 200, 200, 50}, "Exit", &font);
+    buttons["EXIT_BUTTON"] = new Button({100, 250, 200, 50}, "Exit", &font);
     buttons["EXIT_BUTTON"]->onClick.Subscribe(
         [&]() {
             ExitButtonClick(); });
+    buttonVector.push_back(buttons["EXIT_BUTTON"]);
             
-    for (const auto& button : buttons)
-    {
-        buttonVector.push_back(button.second);
-    }
-
     buttonGroup = new ButtonGroup(buttonVector, VERTICAL, 0, 0);
 }
 
 void MainMenuState::Update(float deltaTime)
 {
     UpdateInputs(deltaTime);
+    buttonGroup->Update();
 }
 
 void MainMenuState::Draw()
@@ -74,12 +76,17 @@ void MainMenuState::DrawButtons()
 
 void MainMenuState::PlayButtonClick()
 {
-    states->push(new GameState(states));
+    states->push(new GameState(states, gridSize));
 }
 
 void MainMenuState::ExitButtonClick()
 {
     quit = true;
+}
+
+void MainMenuState::EditorButtonClick()
+{
+    states->push(new EditorState(states, gridSize));
 }
 
 void MainMenuState::UpdateInputs(float deltaTime)

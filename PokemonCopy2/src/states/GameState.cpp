@@ -27,14 +27,21 @@ void GameState::InitPauseMenu()
     pauseMenu = new PauseMenu(font);
 }
 
+void GameState::InitTileMap()
+{
+    tileMap = new TileMap(gridSize, 10, 10);
+}
+
 #pragma endregion
 
-GameState::GameState(std::stack<State*>* states) 
-    : State(states)
+GameState::GameState(std::stack<State*>* states, float gridSize) 
+    : State(states, gridSize)
 {
     InitTextures();
     InitFonts();
     InitPauseMenu();
+    InitTileMap();
+    InputManager::SetCurrentMode(GAMEPLAY);
     isPaused = false;
 }
 
@@ -42,6 +49,7 @@ GameState::~GameState()
 {
     delete player;
     delete pauseMenu;
+    delete tileMap;
 }
 
 void GameState::Update(float deltaTime)
@@ -68,7 +76,7 @@ void GameState::UpdateInputs(float deltaTime)
     if (IsKeyPressed(KEY_ESCAPE))
         EndState();
 
-    switch (inputManager.GetCurrentMode())
+    switch (InputManager::GetCurrentMode())
     {
     default:
     case GAMEPLAY:
@@ -136,13 +144,13 @@ void GameState::OpenPauseMenu()
         ClosePauseMenu();
     else
     {
-        inputManager.SetCurrentMode(UI);
+        InputManager::SetCurrentMode(UI);
         isPaused = true;
     }
 }
 
 void GameState::ClosePauseMenu()
 {
-    inputManager.SetCurrentMode(GAMEPLAY);
+    InputManager::SetCurrentMode(GAMEPLAY);
     isPaused = false;
 }

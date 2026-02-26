@@ -2,18 +2,19 @@
 
 ButtonGroup::ButtonGroup(std::vector<Button*>& buttons, 
     GroupMode mode, int rows, int columns) 
-    : buttons(buttons), rows(rows), columns(columns)
+    : rows(rows), columns(columns), buttons(buttons)
 {
     this->mode = mode;
-    HoverButton(0);
+    if (!buttons.empty())
+        HoverButton(0);
     GridSetup();
 }
 
 void ButtonGroup::Update()
 {
-    if (inputManager.GetCurrentMode() == GAMEPLAY)
+    if (InputManager::GetCurrentMode() != UI)
         return;
-
+    
     ButtonsIteration();
 }
 
@@ -28,8 +29,14 @@ void ButtonGroup::Draw()
 
 void ButtonGroup::GridSetup()
 {
+    if (buttons.empty())
+        return;
+
     for (size_t i = 0; i < buttons.size(); ++i)
     {
+        if (!buttons[i])
+            continue;
+
         if (i == 0)
         {
             leftMargin = buttons[i]->GetRect().x;
@@ -81,30 +88,27 @@ void ButtonGroup::ButtonsIteration()
 
 void ButtonGroup::VerticalIteration()
 {
+    if (buttons.empty())
+        return;
+
     if (IsKeyPressed(KEY_DOWN))
     {
         Button* hoveredButton = GetHoveredButton();
+
         if (!hoveredButton)
         {
-            buttons[0]->SetButtonState(HOVER);
+            HoverButton(0);
             return;
         }
                 
-        hoveredButton->SetButtonState(IDLE);
         for (size_t i = 0; i < buttons.size(); ++i)
         {
             if (buttons[i] == hoveredButton)
             {
-                if (i + 1 < buttons.size())
-                {
-                    buttons[i + 1]->SetButtonState(HOVER);
-                    hoveredButton = buttons[i + 1];
-                }
-                else
-                {
-                    buttons[0]->SetButtonState(HOVER);
-                    hoveredButton = buttons[0];
-                }
+                hoveredButton->SetButtonState(IDLE);
+                const size_t nextIndex = (i + 1) % buttons.size();
+                HoverButton(static_cast<int>(nextIndex));
+                break;
             }
         }
     }
@@ -112,27 +116,20 @@ void ButtonGroup::VerticalIteration()
     if (IsKeyPressed(KEY_UP))
     {
         Button* hoveredButton = GetHoveredButton();
+
         if (!hoveredButton)
         {
-            buttons[0]->SetButtonState(HOVER);
+            HoverButton(0);
             return;
         }
         
-        hoveredButton->SetButtonState(IDLE);
         for (size_t i = 0; i < buttons.size(); ++i)
         {
             if (buttons[i] == hoveredButton)
             {
-                if (i - 1 >= 0)
-                {
-                    buttons[i - 1]->SetButtonState(HOVER);
-                    hoveredButton = buttons[i - 1];
-                }
-                else
-                {
-                    buttons[buttons.size() - 1]->SetButtonState(HOVER);
-                    hoveredButton = buttons[buttons.size() - 1];
-                }
+                hoveredButton->SetButtonState(IDLE);
+                const size_t prevIndex = (i == 0) ? (buttons.size() - 1) : (i - 1);
+                HoverButton(static_cast<int>(prevIndex));
                 break;
             }
         }
@@ -141,30 +138,26 @@ void ButtonGroup::VerticalIteration()
 
 void ButtonGroup::HorizontalIteration()
 {
+    if (buttons.empty())
+        return;
+
     if (IsKeyPressed(KEY_RIGHT))
     {
         Button* hoveredButton = GetHoveredButton();
         if (!hoveredButton)
         {
-            buttons[0]->SetButtonState(HOVER);
+            HoverButton(0);
             return;
         }
                 
-        hoveredButton->SetButtonState(IDLE);
         for (size_t i = 0; i < buttons.size(); ++i)
         {
             if (buttons[i] == hoveredButton)
             {
-                if (i + 1 < buttons.size())
-                {
-                    buttons[i + 1]->SetButtonState(HOVER);
-                    hoveredButton = buttons[i + 1];
-                }
-                else
-                {
-                    buttons[0]->SetButtonState(HOVER);
-                    hoveredButton = buttons[0];
-                }
+                hoveredButton->SetButtonState(IDLE);
+                const size_t nextIndex = (i + 1) % buttons.size();
+                HoverButton(static_cast<int>(nextIndex));
+                break;
             }
         }
     }
@@ -174,25 +167,17 @@ void ButtonGroup::HorizontalIteration()
         Button* hoveredButton = GetHoveredButton();
         if (!hoveredButton)
         {
-            buttons[0]->SetButtonState(HOVER);
+            HoverButton(0);
             return;
         }
-        
-        hoveredButton->SetButtonState(IDLE);
+
         for (size_t i = 0; i < buttons.size(); ++i)
         {
             if (buttons[i] == hoveredButton)
             {
-                if (i - 1 >= 0)
-                {
-                    buttons[i - 1]->SetButtonState(HOVER);
-                    hoveredButton = buttons[i - 1];
-                }
-                else
-                {
-                    buttons[buttons.size() - 1]->SetButtonState(HOVER);
-                    hoveredButton = buttons[buttons.size() - 1];
-                }
+                hoveredButton->SetButtonState(IDLE);
+                const size_t prevIndex = (i == 0) ? (buttons.size() - 1) : (i - 1);
+                HoverButton(static_cast<int>(prevIndex));
                 break;
             }
         }
@@ -201,6 +186,9 @@ void ButtonGroup::HorizontalIteration()
 
 void ButtonGroup::GridIteration()
 {
+    if (buttons.empty())
+        return;
+
     if (!IsKeyPressed(KEY_DOWN) && !IsKeyPressed(KEY_UP) && 
         !IsKeyPressed(KEY_RIGHT) && !IsKeyPressed(KEY_LEFT))
         return;
@@ -212,17 +200,18 @@ void ButtonGroup::GridIteration()
         return;
     }
             
-    hoveredButton->SetButtonState(IDLE);
     for (size_t i = 0; i < buttons.size(); ++i)
     {
         if (buttons[i] != hoveredButton)
             continue;
 
+        hoveredButton->SetButtonState(IDLE);
+
         if (IsKeyPressed(KEY_DOWN))
         {
             if (hoveredButton->GetRect().y >= bottomMargin)
             {
-                for (int j = 0; j < buttons.size(); ++j)
+                for (size_t j = 0; j < buttons.size(); ++j)
                 {
                     if (buttons[j]->GetRect().x == hoveredButton->GetRect().x &&
                         buttons[j]->GetRect().y == topMargin)
@@ -233,13 +222,16 @@ void ButtonGroup::GridIteration()
                 }
             }
             
-            HoverButton(i + columns);
+            int target = static_cast<int>(i) + columns;
+            if (target >= static_cast<int>(buttons.size()))
+                target %= static_cast<int>(buttons.size());
+            HoverButton(target);
         }
         else if (IsKeyPressed(KEY_UP))
         {
             if (hoveredButton->GetRect().y <= topMargin)
             {
-                for (int j = 0; j < buttons.size(); ++j)
+                for (size_t j = 0; j < buttons.size(); ++j)
                 {
                     if (buttons[j]->GetRect().x == hoveredButton->GetRect().x &&
                         buttons[j]->GetRect().y == bottomMargin)
@@ -250,7 +242,10 @@ void ButtonGroup::GridIteration()
                 }
             }
             
-            HoverButton(i - columns);
+            int target = static_cast<int>(i) - columns;
+            while (target < 0)
+                target += static_cast<int>(buttons.size());
+            HoverButton(target);
         }
 
         // Given the fact that the buttons are ordered 
@@ -276,11 +271,21 @@ void ButtonGroup::GridIteration()
             }
             HoverButton(i - 1);
         }
+        break;
     }
 }
 
 void ButtonGroup::HoverButton(int index)
 {
+    if (buttons.empty())
+        return;
+
+    if (index < 0 || index >= static_cast<int>(buttons.size()))
+        return;
+
+    if (!buttons[index])
+        return;
+
     buttons[index]->SetButtonState(HOVER);
     hoveredButton = buttons[index];
 }

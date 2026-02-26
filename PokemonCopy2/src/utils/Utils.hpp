@@ -6,6 +6,7 @@ class Utils
 public:
     static Color YellowColor () { return {243, 216, 63, 255}; }
     static Color GreyBgColor() { return {30, 30, 30, 255}; }
+    static float GetGridSize() { return 50.0f; }
     
     static int TILE_SIZE() { return 32; }
     static int PixelSize() { return 3; }

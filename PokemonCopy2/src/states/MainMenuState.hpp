@@ -3,7 +3,9 @@
 
 #include "src/states/State.hpp"
 #include "src/states/GameState.hpp"
+#include "src/states/EditorState.hpp"
 #include "src/ui/Button.hpp"
+#include "src/managers/InputManager.hpp"
 
 class ButtonGroup;
 
@@ -22,7 +24,7 @@ protected:
     
 
 public:
-    MainMenuState(std::stack<State*>* states);
+    MainMenuState(std::stack<State*>* states, float gridSize);
     virtual ~MainMenuState();
 
     void InitBackground();
@@ -34,6 +36,7 @@ public:
     
     void PlayButtonClick();
     void ExitButtonClick();
+    void EditorButtonClick();
 
     void UpdateInputs(float deltaTime) override;
 };

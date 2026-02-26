@@ -5,6 +5,7 @@
 #include <map>
 #include <string>
 #include <vector>
+#include <iostream>
 #include "../utils/Event.hpp"
 #include "src/managers/InputManager.hpp"
 #include "Button.hpp"
@@ -20,7 +21,7 @@ class ButtonGroup
 {
 private:
     GroupMode mode;
-    Button* hoveredButton;
+    Button* hoveredButton = nullptr;
     InputManager inputManager;
 
     float leftMargin = 0;

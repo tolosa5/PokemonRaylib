@@ -46,7 +46,7 @@ void Game::ImportAssets()
 
 void Game::InitStates()
 {
-    states.push(new GameState(&states));
+    states.push(new MainMenuState(&states, Utils::GetGridSize()));
 }
 
 void Game::Draw()

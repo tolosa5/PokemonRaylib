@@ -20,8 +20,8 @@ Button::Button(Rectangle rect, const std::string& text,
 
 void Button::InitTextures()
 {
-    baseTexture = LoadTexture("assets/graphics/ui/UnselectedButton.png");
-    hoverTexture = LoadTexture("assets/graphics/ui/SelectedButton.png");
+    baseTexture = LoadTexture("assets/graphics/sprites/ui/UnselectedButton.png");
+    hoverTexture = LoadTexture("assets/graphics/sprites/ui/SelectedButton.png");
 }
 
 Button::~Button()
@@ -37,29 +37,27 @@ void Button::Draw()
     {
         case IDLE:
         {
-            currentColor = idleColor;
+            DrawTexture(baseTexture, rect.x, rect.y, WHITE);
             break;
         }
         case HOVER:
         {
-            currentColor = hoverColor;
+            DrawTexture(hoverTexture, rect.x, rect.y, WHITE);
             break;
         }
         case PRESSED:
         {
-            currentColor = activeColor;
+            DrawTexture(hoverTexture, rect.x, rect.y, WHITE);
             break;
         }
 
         default:
             break;
     }
-    
-    DrawTexture(baseTexture, rect.x, rect.y, WHITE);
 
     int textWidth = MeasureText(text.c_str(), fontSize);
-    int textX = rect.x + (rect.width - textWidth) / 2;
-    int textY = rect.y + (rect.height - fontSize) / 2;
+    int textX = rect.x;
+    int textY = rect.y;
     DrawTextEx(font, text.c_str(), (Vector2){textX, textY}, fontSize, 0, BLACK);
 }
 

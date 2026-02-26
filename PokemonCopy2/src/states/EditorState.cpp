@@ -1,14 +1,13 @@
 #include "EditorState.hpp"
 
-EditorState::EditorState(std::stack<State*>* states) : 
-    State(states)
+EditorState::EditorState(std::stack<State*>* states, float gridSize) : 
+    State(states, gridSize)
 {
     font = LoadFont("assets/fonts/monogram.ttf");
 
     InitBackground();
     InitButtons();
-
-
+    InitTileMap();
 }
 
 EditorState::~EditorState()
@@ -19,31 +18,23 @@ EditorState::~EditorState()
         delete it->second;
     }
     //delete buttonGroup;
+    delete tileMap;
 }
 
 void EditorState::InitBackground()
 {
-    backgroundTexture = LoadTexture("assets/graphics/main_menu.png");
-    backgroundTexture.width = GetScreenWidth();
-    backgroundTexture.height = GetScreenHeight();
+    
+}
+
+void EditorState::InitGui()
+{
+    selectorRect = { 0, 0, gridSize, gridSize };
 }
 
 void EditorState::InitButtons()
 {
-    buttons["GAME_STATE_BUTTON"] = new Button({100, 100, 200, 50}, "Play", &font);
-    buttons["GAME_STATE_BUTTON"]->onClick.Subscribe(
-        [&]() {
-            PlayButtonClick(); });
-
-    buttons["GAME_STATE_BUTTON"]->SetButtonState(HOVER);
-
-    buttons["SETTINGS_BUTTON"] = new Button({100, 150, 200, 50}, "Settings", &font);
-
-    buttons["EXIT_BUTTON"] = new Button({100, 200, 200, 50}, "Exit", &font);
-    buttons["EXIT_BUTTON"]->onClick.Subscribe(
-        [&]() {
-            ExitButtonClick(); });
-            
+    
+    
     for (const auto& button : buttons)
     {
         buttonVector.push_back(button.second);
@@ -52,15 +43,25 @@ void EditorState::InitButtons()
     //buttonGroup = new ButtonGroup(buttonVector, VERTICAL);
 }
 
+void EditorState::InitTileMap()
+{
+    tileMap = new TileMap(gridSize, 10, 10);
+}
+
 void EditorState::Update(float deltaTime)
 {
+    State::Update(deltaTime);
+    UpdateEditorInputs();
     UpdateInputs(deltaTime);
+    UpdateGui();
+    UpdateButtons();
 }
 
 void EditorState::Draw()
 {
-    DrawTexture(backgroundTexture, 0, 0, WHITE);
+    DrawRectangleLinesEx(selectorRect, 2, GREEN);
     DrawButtons();
+    tileMap->Draw();
 }
 
 void EditorState::DrawButtons()
@@ -69,6 +70,30 @@ void EditorState::DrawButtons()
     {
         button.second->Draw();
     }
+}
+
+void EditorState::UpdateButtons()
+{
+    //buttonGroup->Update();
+}
+
+void EditorState::UpdateGui()
+{
+    selectorRect.x = mousePosGrid.x * gridSize;
+    selectorRect.y = mousePosGrid.y * gridSize;
+}
+
+void EditorState::UpdateEditorInputs()
+{
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        tileMap->AddTile(mousePosGrid.x, mousePosGrid.y, 0);
+    }
+    else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
+    {
+        tileMap->RemoveTile(mousePosGrid.x, mousePosGrid.y, 0);
+    }
+    
 }
 
 void EditorState::PlayButtonClick()

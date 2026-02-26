@@ -20,14 +20,17 @@ protected:
     std::map<std::string, Texture2D> textures;
 
     std::stack<State*>* states;
+    float gridSize;
+    Vector2 mousePosGrid;
     
 public:
-    State(std::stack<State*>* states);
+    State(std::stack<State*>* states, float gridSize);
     virtual ~State();
 
-    virtual void Update(float deltaTime) = 0;
+    virtual void Update(float deltaTime);
     virtual void Draw() = 0;
     virtual void UpdateInputs(float deltaTime) = 0;
+    void UpdateMousePositions();
     virtual void EndState();
 
     const bool& GetQuit() const { return quit; }
