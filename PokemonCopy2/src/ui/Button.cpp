@@ -1,21 +1,26 @@
 #include "Button.hpp"
 
 Button::Button(Rectangle rect, const std::string& text, 
-    Font* font, int fontSize, Color idleColor, 
+    Font* font, Texture2D baseTexture, Texture2D hoverTexture,
+    int fontSize, Color idleColor, 
     Color hoverColor, Color activeColor)
 {
     this->rect = rect;
     this->state = IDLE;
 
     this->text = text;
-    this->font = *font;
+    if (font && font->texture.id > 0)
+        this->font = *font;
+    else
+        this->font = GetFontDefault();
     this->fontSize = fontSize;
     
     this->idleColor = idleColor;
     this->hoverColor = hoverColor;
     this->activeColor = activeColor;
 
-    InitTextures();
+    this->baseTexture = baseTexture;
+    this->hoverTexture = hoverTexture;
 }
 
 void Button::InitTextures()
@@ -26,28 +31,40 @@ void Button::InitTextures()
 
 Button::~Button()
 {
-    UnloadTexture(baseTexture);
-    UnloadTexture(hoverTexture);
+    
 }
 
 void Button::Draw()
 {
     Color currentColor = idleColor;
+    Texture2D currentTexture = baseTexture;
     switch (state)
     {
         case IDLE:
         {
-            DrawTexture(baseTexture, rect.x, rect.y, WHITE);
+            currentTexture = baseTexture;
+            if (currentTexture.id > 0)
+                DrawTexture(currentTexture, rect.x, rect.y, WHITE);
+            else
+                DrawRectangleRec(rect, idleColor);
             break;
         }
         case HOVER:
         {
-            DrawTexture(hoverTexture, rect.x, rect.y, WHITE);
+            currentTexture = hoverTexture;
+            if (currentTexture.id > 0)
+                DrawTexture(currentTexture, rect.x, rect.y, WHITE);
+            else
+                DrawRectangleRec(rect, hoverColor);
             break;
         }
         case PRESSED:
         {
-            DrawTexture(hoverTexture, rect.x, rect.y, WHITE);
+            currentTexture = hoverTexture;
+            if (currentTexture.id > 0)
+                DrawTexture(currentTexture, rect.x, rect.y, WHITE);
+            else
+                DrawRectangleRec(rect, activeColor);
             break;
         }
 
@@ -56,8 +73,15 @@ void Button::Draw()
     }
 
     int textWidth = MeasureText(text.c_str(), fontSize);
-    int textX = rect.x;
-    int textY = rect.y;
+
+    float drawWidth = (currentTexture.id > 0) ? 
+    static_cast<float>(currentTexture.width) : rect.width;
+
+    float drawHeight = (currentTexture.id > 0) ? 
+    static_cast<float>(currentTexture.height) : rect.height;
+    
+    int textX = static_cast<int>(rect.x + drawWidth / 2 - textWidth / 2);
+    int textY = static_cast<int>(rect.y + drawHeight / 2 - fontSize / 2);
     DrawTextEx(font, text.c_str(), (Vector2){textX, textY}, fontSize, 0, BLACK);
 }
 

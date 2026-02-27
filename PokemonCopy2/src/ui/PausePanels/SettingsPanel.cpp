@@ -1,21 +1,30 @@
 #include "SettingsPanel.hpp"
 
+void SettingsPanel::InitTextures()
+{
+    buttonBaseTexture = LoadTexture("assets/graphics/sprites/ui/UnselectedButton.png");
+    buttonHoverTexture = LoadTexture("assets/graphics/sprites/ui/SelectedButton.png");
+}
+
 void SettingsPanel::InitButtons()
 {
     buttons["AUDIO"] = new Button({ 
-        panelRect.x + 20, panelRect.y + 20, 340, 50 }, "Audio", &font);
+        panelRect.x + 20, panelRect.y + 20, 340, 50 }, "Audio", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["AUDIO"]->onClick.Subscribe(
         [&]() {
             AudioButtonClick(); });
 
     buttons["VIDEO"] = new Button({ 
-        panelRect.x + 20, panelRect.y + 90, 340, 50 }, "Video", &font);
+        panelRect.x + 20, panelRect.y + 90, 340, 50 }, "Video", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["VIDEO"]->onClick.Subscribe(
         [&]() {
             VideoButtonClick(); });
 
     buttons["CONTROLS"] = new Button({ 
-        panelRect.x + 20, panelRect.y + 160, 340, 50 }, "Controls", &font);
+        panelRect.x + 20, panelRect.y + 160, 340, 50 }, "Controls", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["CONTROLS"]->onClick.Subscribe(
         [&]() {
             ControlsButtonClick(); });
@@ -33,17 +42,22 @@ SettingsPanel::SettingsPanel(Font& font) :
     LoadTexture("assets/graphics/ui/SettingsPanel.png")), 
     font(font)
 {
+    InitTextures();
     InitButtons();
 }
 
 SettingsPanel::~SettingsPanel()
 {
-    UnloadTexture(backgroundTexture);
+    if (backgroundTexture.id > 0)
+        UnloadTexture(backgroundTexture);
     delete buttonGroup;
     for (auto& button : buttons)
     {
         delete button.second;
     }
+
+    UnloadTexture(buttonBaseTexture);
+    UnloadTexture(buttonHoverTexture);
 }
 
 void SettingsPanel::Update()

@@ -13,12 +13,18 @@ class MainMenuState : public State
 {
 private:
 
-    Texture2D backgroundTexture;
+    Rectangle bgRect;
     Font font;
+    bool customFontLoaded = false;
 
     std::map<std::string, Button*> buttons;
     ButtonGroup* buttonGroup;
     std::vector<Button*> buttonVector;
+    Texture2D playButtonBaseTexture;
+    Texture2D playButtonHoverTexture;
+    
+    Texture2D settingsButtonBaseTexture;
+    Texture2D settingsButtonHoverTexture;
 
 protected:
     
@@ -27,6 +33,7 @@ public:
     MainMenuState(std::stack<State*>* states, float gridSize);
     virtual ~MainMenuState();
 
+    void InitTextures();
     void InitBackground();
     void InitButtons();
     void Update(float deltaTime) override;

@@ -8,6 +8,11 @@ EditorState::EditorState(std::stack<State*>* states, float gridSize) :
     InitBackground();
     InitButtons();
     InitTileMap();
+    InitGui();
+    InitTexts();
+
+    selectedSheetTile = { 0, 0 };
+    paintedRect = { 0, 0, gridSize, gridSize };
 }
 
 EditorState::~EditorState()
@@ -43,25 +48,31 @@ void EditorState::InitButtons()
     //buttonGroup = new ButtonGroup(buttonVector, VERTICAL);
 }
 
+void EditorState::InitTexts()
+{
+    cursorText = "Editor Mode";
+}
+
 void EditorState::InitTileMap()
 {
-    tileMap = new TileMap(gridSize, 10, 10);
+    tileMap = new TileMap(gridSize, 20, 20);
 }
 
 void EditorState::Update(float deltaTime)
 {
-    State::Update(deltaTime);
+    UpdateMousePositions();
     UpdateEditorInputs();
     UpdateInputs(deltaTime);
     UpdateGui();
     UpdateButtons();
+    tileMap->Update();
 }
 
 void EditorState::Draw()
 {
-    DrawRectangleLinesEx(selectorRect, 2, GREEN);
-    DrawButtons();
     tileMap->Draw();
+    DrawButtons();
+    DrawRectangleLinesEx(selectorRect, 2, GREEN);
 }
 
 void EditorState::DrawButtons()
@@ -79,6 +90,35 @@ void EditorState::UpdateButtons()
 
 void EditorState::UpdateGui()
 {
+    int selectedX = static_cast<int>(selectedSheetTile.x);
+    int selectedY = static_cast<int>(selectedSheetTile.y);
+
+    const int maxColumns = static_cast<int>(tileMap->GetSheetColumns(gridSize));
+    const int maxRows = static_cast<int>(tileMap->GetSheetRows(gridSize));
+
+    if (IsKeyPressed(KEY_RIGHT))
+        selectedX++;
+    if (IsKeyPressed(KEY_LEFT))
+        selectedX--;
+    if (IsKeyPressed(KEY_DOWN))
+        selectedY++;
+    if (IsKeyPressed(KEY_UP))
+        selectedY--;
+
+    selectedX = Clamp(selectedX, 0, maxColumns - 1);
+    selectedY = Clamp(selectedY, 0, maxRows - 1);
+
+    selectedSheetTile = {
+        static_cast<float>(selectedX),
+        static_cast<float>(selectedY)
+    };
+
+    paintedRect.x = selectedSheetTile.x * gridSize;
+    paintedRect.y = selectedSheetTile.y * gridSize;
+    paintedRect.width = gridSize;
+    paintedRect.height = gridSize;
+
+
     selectorRect.x = mousePosGrid.x * gridSize;
     selectorRect.y = mousePosGrid.y * gridSize;
 }
@@ -87,23 +127,13 @@ void EditorState::UpdateEditorInputs()
 {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        tileMap->AddTile(mousePosGrid.x, mousePosGrid.y, 0);
+        tileMap->AddTile(mousePosGrid.x, mousePosGrid.y, 0, paintedRect);
     }
     else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
     {
         tileMap->RemoveTile(mousePosGrid.x, mousePosGrid.y, 0);
     }
     
-}
-
-void EditorState::PlayButtonClick()
-{
-    //states->push(new GameState(states));
-}
-
-void EditorState::ExitButtonClick()
-{
-    quit = true;
 }
 
 void EditorState::UpdateInputs(float deltaTime)
@@ -115,5 +145,15 @@ void EditorState::UpdateInputs(float deltaTime)
 
     if (IsKeyPressed(KEY_ESCAPE))
         EndState();
+}
+
+void EditorState::PlayButtonClick()
+{
+    //states->push(new GameState(states));
+}
+
+void EditorState::ExitButtonClick()
+{
+    quit = true;
 }
 

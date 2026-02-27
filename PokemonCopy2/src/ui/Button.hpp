@@ -31,7 +31,8 @@ private:
 public:
 
     Button(Rectangle rect, const std::string& text, 
-        Font* font, int fontSize = 20, Color idleColor = WHITE, 
+        Font* font, Texture2D baseTexture, Texture2D hoverTexture, 
+        int fontSize = 20, Color idleColor = WHITE, 
         Color hoverColor = GRAY, Color activeColor = DARKGRAY);
     ~Button();
     

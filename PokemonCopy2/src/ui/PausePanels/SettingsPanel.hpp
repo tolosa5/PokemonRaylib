@@ -12,7 +12,12 @@ private:
     std::vector<Button*> buttonVector;
     ButtonGroup* buttonGroup;
 
+    Texture2D buttonBaseTexture;
+    Texture2D buttonHoverTexture;
+
 public:
+
+    void InitTextures();
     void InitButtons();
     SettingsPanel(Font& font);
     virtual ~SettingsPanel();

@@ -1,30 +1,26 @@
 #include "TileMap.hpp"
-#include <cstddef>
 
-TileMap::TileMap(float gridSize, unsigned width, unsigned height)
+TileMap::TileMap(float gridSize, unsigned width, unsigned layer)
 {
     gridSizeF = gridSize;
     gridSizeU = static_cast<unsigned>(gridSizeF);
-    maxSize = { (float)width, (float)height };
-    layers = 2;
+    maxSize = { (float)width, (float)layer };
+    layers = 1;
 
-    map.resize(maxSize.x);
+    map.resize(maxSize.x, std::vector<std::vector<Tile*>>());
     for (size_t x = 0; x < maxSize.x; x++)
     {
-        map.push_back(std::vector<std::vector<Tile*>>());
-
         for (size_t y = 0; y < maxSize.y; y++)
         {
-            map[x].resize(maxSize.y);
-            map[x].push_back(std::vector<Tile*>());
-
-            for (size_t z = 0; z < layers; z++) // Assuming 3 layers of tiles
+            map[x].resize(maxSize.y, std::vector<Tile*>());
+            for (size_t z = 0; z < layers; z++)
             {
-                map[x][y].resize(layers);
-                map[x][y].push_back(new Tile(x * gridSizeF, y * gridSizeF, gridSizeF));
-            } 
+                map[x][y].resize(layers, nullptr);
+            }
         }
     }
+
+    tileTextureSheet = LoadTexture("assets/graphics/sprites/tileset.png");
 }
 
 TileMap::~TileMap()
@@ -39,6 +35,7 @@ TileMap::~TileMap()
             }
         }
     }
+    UnloadTexture(tileTextureSheet);
 }
 
 void TileMap::Update()
@@ -61,23 +58,26 @@ void TileMap::Draw()
     }
 }
 
-void TileMap::AddTile(const unsigned x, const unsigned y, const unsigned z)
+void TileMap::AddTile(const unsigned x, const unsigned y, 
+    const unsigned z, const Rectangle& sourceRect)
 {
-    if (x < map.size() && x >= 0 && 
-        y < map[0].size() && y >= 0 &&
+    if (x < maxSize.x && x >= 0 && 
+        y < maxSize.y && y >= 0 &&
         z < layers && z >= 0)
     {
         if (map[x][y][z] == nullptr)
-            map[x][y][z] = new Tile(x * gridSizeF, y * gridSizeF, gridSizeF);
+        {
+            std::cout << "Added tile at: " << x << ", " << y << std::endl;
+            map[x][y][z] = new Tile(x * gridSizeF, y * gridSizeF, 
+                gridSizeF, tileTextureSheet, sourceRect );
+        }
     }
-    
 }
 
 void TileMap::RemoveTile(const unsigned x, const unsigned y, const unsigned z)
 {
-    // Implementation for removing a tile at the specified position and layer
-    if (x < map.size() && x >= 0 && 
-        y < map[0].size() && y >= 0 &&
+    if (x < maxSize.x && x >= 0 && 
+        y < maxSize.y && y >= 0 &&
         z < layers && z >= 0)
     {
         if (map[x][y][z] != nullptr)
@@ -86,5 +86,23 @@ void TileMap::RemoveTile(const unsigned x, const unsigned y, const unsigned z)
             map[x][y][z] = nullptr;
         }
     }
+}
+
+unsigned TileMap::GetSheetColumns(float tileWidth) const
+{
+    if (tileWidth <= 0.f)
+        return 1;
+
+    const unsigned columns = static_cast<unsigned>(tileTextureSheet.width / tileWidth);
+    return columns > 0 ? columns : 1;
+}
+
+unsigned TileMap::GetSheetRows(float tileHeight) const
+{
+    if (tileHeight <= 0.f)
+        return 1;
+
+    const unsigned rows = static_cast<unsigned>(tileTextureSheet.height / tileHeight);
+    return rows > 0 ? rows : 1;
 }
 

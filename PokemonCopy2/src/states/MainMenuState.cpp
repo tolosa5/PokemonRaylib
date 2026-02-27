@@ -5,7 +5,15 @@ MainMenuState::MainMenuState(std::stack<State*>* states, float gridSize) :
     State(states, gridSize)
 {
     font = LoadFont("assets/fonts/monogram.ttf");
+    customFontLoaded = font.texture.id > 0;
+    if (!customFontLoaded)
+    {
+        TraceLog(LOG_WARNING,
+            "MAIN_MENU: Failed to load font assets/fonts/monogram.ttf. Using default font.");
+        font = GetFontDefault();
+    }
 
+    InitTextures();
     InitBackground();
     InitButtons();
     InputManager::SetCurrentMode(UI);
@@ -19,33 +27,78 @@ MainMenuState::~MainMenuState()
         delete it->second;
     }
     delete buttonGroup;
+
+    if (playButtonBaseTexture.id > 0)
+        UnloadTexture(playButtonBaseTexture);
+    if (playButtonHoverTexture.id > 0)
+        UnloadTexture(playButtonHoverTexture);
+    if (settingsButtonBaseTexture.id > 0)
+        UnloadTexture(settingsButtonBaseTexture);
+    if (settingsButtonHoverTexture.id > 0)
+        UnloadTexture(settingsButtonHoverTexture);
+    if (customFontLoaded)
+        UnloadFont(font);
+}
+
+void MainMenuState::InitTextures()
+{
+    playButtonBaseTexture = LoadTexture(
+        "assets/graphics/sprites/ui/UnselectedContinueGameBox.png");
+    playButtonBaseTexture.width = 700;
+    playButtonBaseTexture.height = 273;
+
+    playButtonHoverTexture = LoadTexture(
+        "assets/graphics/sprites/ui/HoverContinueGameBox.png");
+    playButtonHoverTexture.width = 700;
+    playButtonHoverTexture.height = 273;
+
+    settingsButtonBaseTexture = LoadTexture(
+        "assets/graphics/sprites/ui/UnselectedOptionsBox.png");
+    settingsButtonBaseTexture.width = 200;
+    settingsButtonBaseTexture.height = 78;
+
+    settingsButtonHoverTexture = LoadTexture(
+        "assets/graphics/sprites/ui/HoverOptionsBox.png");
+    settingsButtonHoverTexture.width = 200;
+    settingsButtonHoverTexture.height = 78;
 }
 
 void MainMenuState::InitBackground()
 {
-    backgroundTexture = LoadTexture("assets/graphics/main_menu.png");
-    backgroundTexture.width = GetScreenWidth();
-    backgroundTexture.height = GetScreenHeight();
+    bgRect = {0, 0, (float)GetScreenWidth(), (float)GetScreenHeight()};
 }
 
 void MainMenuState::InitButtons()
 {
-    buttons["GAME_STATE_BUTTON"] = new Button({100, 100, 200, 50}, "Play", &font);
+    Rectangle playButtonRect = {(float)(
+        GetScreenWidth() / 2.0f - playButtonBaseTexture.width / 2.0f), 
+        100, 100, 100};
+    float spacing = 50.0f;
+    Rectangle settingsButtonRect = {(float)(
+        GetScreenWidth() / 2.0f - settingsButtonBaseTexture.width / 2.0f), 
+        playButtonRect.y + playButtonRect.height + spacing, 
+        25, 25};
+
+    buttons["GAME_STATE_BUTTON"] = new Button(playButtonRect, "Play",
+         &font, playButtonBaseTexture, playButtonHoverTexture);
     buttons["GAME_STATE_BUTTON"]->onClick.Subscribe(
         [&]() {
             PlayButtonClick(); });
     buttonVector.push_back(buttons["GAME_STATE_BUTTON"]);
 
-    buttons["SETTINGS_BUTTON"] = new Button({100, 150, 200, 50}, "Settings", &font);
+    buttons["SETTINGS_BUTTON"] = new Button(settingsButtonRect, "Settings",
+         &font, settingsButtonBaseTexture, settingsButtonHoverTexture);
     buttonVector.push_back(buttons["SETTINGS_BUTTON"]);
     
-    buttons["EDITOR_BUTTON"] = new Button({100, 200, 200, 50}, "Editor", &font);
+    buttons["EDITOR_BUTTON"] = new Button({360, settingsButtonRect.y + settingsButtonBaseTexture.height + spacing, 25, 25}, "Editor",
+         &font, settingsButtonBaseTexture, settingsButtonHoverTexture);
     buttons["EDITOR_BUTTON"]->onClick.Subscribe(
         [&]() {
             EditorButtonClick(); });
     buttonVector.push_back(buttons["EDITOR_BUTTON"]);
 
-    buttons["EXIT_BUTTON"] = new Button({100, 250, 200, 50}, "Exit", &font);
+    buttons["EXIT_BUTTON"] = new Button({360, settingsButtonRect.y + settingsButtonBaseTexture.height + spacing * 2, 25, 25}, "Exit",
+         &font, settingsButtonBaseTexture, settingsButtonHoverTexture);
     buttons["EXIT_BUTTON"]->onClick.Subscribe(
         [&]() {
             ExitButtonClick(); });
@@ -62,7 +115,7 @@ void MainMenuState::Update(float deltaTime)
 
 void MainMenuState::Draw()
 {
-    DrawTexture(backgroundTexture, 0, 0, WHITE);
+    DrawRectangleRec(bgRect, Utils::GreyBgColor());
     DrawButtons();
 }
 

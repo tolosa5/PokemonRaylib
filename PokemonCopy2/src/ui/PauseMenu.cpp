@@ -12,34 +12,47 @@ void PauseMenu::InitPanels()
     */
 }
 
+void PauseMenu::InitTextures()
+{
+    backgroundTexture = LoadTexture("assets/graphics/ui/PauseMenu.png");
+    buttonBaseTexture = LoadTexture("assets/graphics/sprites/ui/UnselectedButton.png");
+    buttonHoverTexture = LoadTexture("assets/graphics/sprites/ui/SelectedButton.png");
+}
+
 void PauseMenu::InitButtons()
 {
-    buttons["POKEDEX"] = new Button({ 900, 0, 380, 50 }, "Pokedex", &font);
+    buttons["POKEDEX"] = new Button({ 900, 0, 100, 100 }, "Pokedex", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["POKEDEX"]->onClick.Subscribe(
         [&]() {
             PokedexButtonClick(); });
 
-    buttons["POKEMON"] = new Button({ 900, 50, 380, 50 }, "Pokemon", &font);
+    buttons["POKEMON"] = new Button({ 900, 50, 100, 100 }, "Pokemon", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["POKEMON"]->onClick.Subscribe(
         [&]() {
             PokemonButtonClick(); });
 
-    buttons["BAG"] = new Button({ 900, 100, 380, 50 }, "Bag", &font);
+    buttons["BAG"] = new Button({ 900, 100, 100, 100 }, "Bag", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["BAG"]->onClick.Subscribe(
         [&]() {
             BagButtonClick(); });
 
-    buttons["CARNET"] = new Button({ 900, 150, 380, 50 }, "Carnet", &font);
+    buttons["CARNET"] = new Button({ 900, 150, 100, 100 }, "Carnet", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["CARNET"]->onClick.Subscribe(
         [&]() {
             CarnetButtonClick(); });
 
-    buttons["SAVE"] = new Button({ 900, 200, 380, 50 }, "Save", &font);
+    buttons["SAVE"] = new Button({ 900, 200, 100, 100 }, "Save", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["SAVE"]->onClick.Subscribe(
         [&]() {
             SaveButtonClick(); });
 
-    buttons["SETTINGS"] = new Button({ 900, 250, 380, 50 }, "Settings", &font);
+    buttons["SETTINGS"] = new Button({ 900, 250, 380, 50 }, "Settings", 
+        &font, buttonBaseTexture, buttonHoverTexture);
     buttons["SETTINGS"]->onClick.Subscribe(
         [&]() {
             SettingsButtonClick(); });
@@ -51,18 +64,13 @@ void PauseMenu::InitButtons()
     buttonGroup = new ButtonGroup(buttonVector, VERTICAL);
 }
 
-void PauseMenu::InitTextures()
-{
-    backgroundTexture = LoadTexture("assets/graphics/ui/PauseMenu.png");
-}
-
 PauseMenu::PauseMenu(Font& font) 
     : font(font)
 {
     menuPanel = { 900, 0, 380, 720 };
     InitPanels();
-    InitButtons();
     InitTextures();
+    InitButtons();
 }
 
 PauseMenu::~PauseMenu()
@@ -75,6 +83,15 @@ PauseMenu::~PauseMenu()
     {
         delete button.second;
     }
+
+    delete buttonGroup;
+
+    if (backgroundTexture.id > 0)
+        UnloadTexture(backgroundTexture);
+    if (buttonBaseTexture.id > 0)
+        UnloadTexture(buttonBaseTexture);
+    if (buttonHoverTexture.id > 0)
+        UnloadTexture(buttonHoverTexture);
 }
 
 void PauseMenu::Update()

@@ -27,7 +27,7 @@ public:
     State(std::stack<State*>* states, float gridSize);
     virtual ~State();
 
-    virtual void Update(float deltaTime);
+    virtual void Update(float deltaTime) = 0;
     virtual void Draw() = 0;
     virtual void UpdateInputs(float deltaTime) = 0;
     void UpdateMousePositions();

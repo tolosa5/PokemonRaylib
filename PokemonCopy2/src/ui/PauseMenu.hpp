@@ -25,6 +25,9 @@ private:
     std::vector<Button*> buttonVector;
     ButtonGroup* buttonGroup;
 
+    Texture2D buttonBaseTexture;
+    Texture2D buttonHoverTexture;
+
 
     void InitPanels();
     void InitButtons();

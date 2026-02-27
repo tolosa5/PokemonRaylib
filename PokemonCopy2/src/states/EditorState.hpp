@@ -10,8 +10,11 @@ class EditorState : public State
 private:
 
     Rectangle selectorRect;
+    Rectangle paintedRect;
+    Vector2 selectedSheetTile;
     Texture2D backgroundTexture;
     Font font;
+    std::string cursorText;
 
     std::map<std::string, Button*> buttons;
     //ButtonGroup* buttonGroup;
@@ -23,6 +26,7 @@ private:
     void InitGui();
     void InitButtons();
     void InitTileMap();
+    void InitTexts();
 
 protected:
     

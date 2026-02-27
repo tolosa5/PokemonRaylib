@@ -13,11 +13,6 @@ State::~State()
 
 }
 
-void State::Update(float deltaTime)
-{
-    UpdateMousePositions();
-}
-
 void State::EndState()
 {
     quit = true;
