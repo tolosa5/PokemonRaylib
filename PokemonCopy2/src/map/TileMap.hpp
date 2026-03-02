@@ -32,7 +32,7 @@ public:
     unsigned GetSheetColumns(float tileWidth) const;
     unsigned GetSheetRows(float tileHeight) const;
 
-    Texture2D* GetTileTexture() { return &tileTextureSheet; }
+    Texture2D* GetTextureSheet() { return &tileTextureSheet; }
 };
 
 #endif

@@ -4,6 +4,7 @@
 #include "src/states/State.hpp"
 #include "src/ui/Button.hpp"
 #include "src/map/TileMap.hpp"
+#include "src/ui/TextureSelector.hpp"
 
 class EditorState : public State
 {
@@ -21,12 +22,14 @@ private:
     std::vector<Button*> buttonVector;
 
     TileMap* tileMap;
+    TextureSelector* textureSelector;
 
     void InitBackground();
     void InitGui();
     void InitButtons();
     void InitTileMap();
     void InitTexts();
+    void InitTextureSelector();
 
 protected:
     

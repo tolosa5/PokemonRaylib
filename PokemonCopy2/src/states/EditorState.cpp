@@ -7,9 +7,10 @@ EditorState::EditorState(std::stack<State*>* states, float gridSize) :
 
     InitBackground();
     InitButtons();
-    InitTileMap();
-    InitGui();
     InitTexts();
+    InitTileMap();
+    InitTextureSelector();
+    InitGui();
 
     selectedSheetTile = { 0, 0 };
     paintedRect = { 0, 0, gridSize, gridSize };
@@ -24,6 +25,7 @@ EditorState::~EditorState()
     }
     //delete buttonGroup;
     delete tileMap;
+    delete textureSelector;
 }
 
 void EditorState::InitBackground()
@@ -46,6 +48,12 @@ void EditorState::InitButtons()
     }
 
     //buttonGroup = new ButtonGroup(buttonVector, VERTICAL);
+}
+
+void EditorState::InitTextureSelector()
+{
+    textureSelector = new TextureSelector(
+        { 32, 32 }, { 256, 600 }, gridSize, tileMap->GetTextureSheet());
 }
 
 void EditorState::InitTexts()
@@ -71,8 +79,11 @@ void EditorState::Update(float deltaTime)
 void EditorState::Draw()
 {
     tileMap->Draw();
+    textureSelector->Draw();
     DrawButtons();
-    DrawRectangleLinesEx(selectorRect, 2, GREEN);
+
+    if (!textureSelector->IsActive())
+        DrawRectangleLinesEx(selectorRect, 2, GREEN);
 }
 
 void EditorState::DrawButtons()
@@ -90,48 +101,31 @@ void EditorState::UpdateButtons()
 
 void EditorState::UpdateGui()
 {
-    int selectedX = static_cast<int>(selectedSheetTile.x);
-    int selectedY = static_cast<int>(selectedSheetTile.y);
-
-    const int maxColumns = static_cast<int>(tileMap->GetSheetColumns(gridSize));
-    const int maxRows = static_cast<int>(tileMap->GetSheetRows(gridSize));
-
-    if (IsKeyPressed(KEY_RIGHT))
-        selectedX++;
-    if (IsKeyPressed(KEY_LEFT))
-        selectedX--;
-    if (IsKeyPressed(KEY_DOWN))
-        selectedY++;
-    if (IsKeyPressed(KEY_UP))
-        selectedY--;
-
-    selectedX = Clamp(selectedX, 0, maxColumns - 1);
-    selectedY = Clamp(selectedY, 0, maxRows - 1);
-
-    selectedSheetTile = {
-        static_cast<float>(selectedX),
-        static_cast<float>(selectedY)
-    };
-
-    paintedRect.x = selectedSheetTile.x * gridSize;
-    paintedRect.y = selectedSheetTile.y * gridSize;
-    paintedRect.width = gridSize;
-    paintedRect.height = gridSize;
-
-
-    selectorRect.x = mousePosGrid.x * gridSize;
-    selectorRect.y = mousePosGrid.y * gridSize;
+    textureSelector->Update(GetMousePosition());
+    if (!textureSelector->IsActive())
+    {
+        selectorRect.x = mousePosGrid.x * gridSize;
+        selectorRect.y = mousePosGrid.y * gridSize;
+    }
 }
 
 void EditorState::UpdateEditorInputs()
 {
     if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
     {
-        tileMap->AddTile(mousePosGrid.x, mousePosGrid.y, 0, paintedRect);
+        if (!textureSelector->IsActive())
+            tileMap->AddTile(mousePosGrid.x, mousePosGrid.y, 0, paintedRect);
+        else
+        {
+            paintedRect = textureSelector->GetSelectedRect();
+            std::cout << "Selected Rect: " << paintedRect.x << ", " << paintedRect.y 
+                << ", " << paintedRect.width << ", " << paintedRect.height << std::endl;
+        }
     }
     else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT))
     {
-        tileMap->RemoveTile(mousePosGrid.x, mousePosGrid.y, 0);
+        if (!textureSelector->IsActive())
+            tileMap->RemoveTile(mousePosGrid.x, mousePosGrid.y, 0);
     }
     
 }
