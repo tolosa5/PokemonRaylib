@@ -24,12 +24,16 @@ private:
     TileMap* tileMap;
     TextureSelector* textureSelector;
 
+    Rectangle sideBarRect;
+
+    bool paintedTileCollision;
+    short paintedTileType;
+
     void InitBackground();
     void InitGui();
     void InitButtons();
     void InitTileMap();
     void InitTexts();
-    void InitTextureSelector();
 
 protected:
     

@@ -29,7 +29,7 @@ void GameState::InitPauseMenu()
 
 void GameState::InitTileMap()
 {
-    tileMap = new TileMap(gridSize, 10, 10);
+    tileMap = new TileMap(gridSize, 10, 10, "assets/graphics/sprites/tileset.png");
 }
 
 #pragma endregion

@@ -1,20 +1,33 @@
 #include "Tile.hpp"
 
-Tile::Tile(float x, float y, float gridSizeF, const Texture2D& tileTextureSheet, 
-    const Rectangle& sourceRect)
+Tile::Tile(unsigned gridX, unsigned gridY, float gridSizeF, const Texture2D& tileTextureSheet, 
+    const Rectangle& sourceRect, bool collision, short type)
 {
     shape.height = gridSizeF;
     shape.width = gridSizeF;
     texture = tileTextureSheet;
     this->sourceRect = sourceRect;
-    shape.x = x;
-    shape.y = y;
+    shape.x = gridX * gridSizeF;
+    shape.y = gridY * gridSizeF;
     //shape = sourceRect;
+
+    this->collision = collision;
+    this->type = type;
 }
 
 Tile::~Tile()
 {
 
+}
+
+const std::string Tile::GetAsString() const
+{
+    std::stringstream ss;
+
+    ss << sourceRect.x << " " << sourceRect.y << " " << 
+        collision << " " << type;
+
+    return ss.str();
 }
 
 void Tile::Update()

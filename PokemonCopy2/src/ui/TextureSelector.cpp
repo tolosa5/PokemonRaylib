@@ -1,10 +1,17 @@
 #include "TextureSelector.hpp"
 
+void TextureSelector::InitButtons()
+{
+
+}
+
 TextureSelector::TextureSelector(Vector2 position, 
-    Vector2 size, float gridSize, const Texture2D* textureSheet)
+    Vector2 size, float gridSize, const Texture2D* textureSheet, Font& font) 
+        : font(font)
 {
     this->gridSize = gridSize;
     active = false;
+    hidden = false;
     bounds = { position.x, position.y, size.x, size.y };
     
     texture = *textureSheet;
@@ -21,15 +28,20 @@ TextureSelector::TextureSelector(Vector2 position,
 
     textureRect.width = static_cast<int>(gridSize);
     textureRect.height = static_cast<int>(gridSize);
+
+    InitButtons();
 }
 
 TextureSelector::~TextureSelector()
 {
-
+    
 }
 
 void TextureSelector::Update(const Vector2& mouseWindowPosition)
 {
+    if (hidden)
+        return;
+
     active = CheckCollisionPointRec(mouseWindowPosition, bounds);
 
     if (active)
@@ -49,6 +61,9 @@ void TextureSelector::Update(const Vector2& mouseWindowPosition)
 
 void TextureSelector::Draw()
 {
+    if (hidden)
+        return;
+
     DrawRectangleLinesEx(bounds, 2, WHITE);
     DrawTextureRec(texture, sheetRect, { bounds.x, bounds.y }, WHITE);
 
