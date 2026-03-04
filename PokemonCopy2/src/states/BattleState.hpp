@@ -13,10 +13,7 @@ private:
     Rectangle playerInfoBox;
     Rectangle enemyInfoBox;
     Font font;
-    std::map<std::string, Button*> buttons;
-    ButtonGroup* buttonGroup;
-    std::vector<Button*> buttonVector;
-
+    
     Texture2D buttonBaseTexture;
     Texture2D buttonHoverTexture;
     Texture2D textBoxTexture;
@@ -24,7 +21,19 @@ private:
     Texture2D playerInfoBoxTexture;
     Texture2D enemyInfoBoxTexture;
 
+    void BattleButtonClick();
+    void BagButtonClick();
+    void PkmnButtonClick(bool postFeinted = false);
+    void RunButtonClick();
+    void Attack1ButtonClick();
+    void Attack2ButtonClick();
+    void Attack3ButtonClick();
+    void Attack4ButtonClick();
+
 public:
+    std::map<std::string, Button*> buttons;
+    ButtonGroup* buttonGroup;
+    std::vector<Button*> buttonVector;
 
     BattleState(std::stack<State*>* states, float gridSize);
     virtual ~BattleState();
@@ -43,15 +52,6 @@ public:
     void UpdateBattleInputs();
 
     void UpdateInputs(float deltaTime) override;
-
-    void BattleButtonClick();
-    void BagButtonClick();
-    void PkmnButtonClick();
-    void RunButtonClick();
-    void Attack1ButtonClick();
-    void Attack2ButtonClick();
-    void Attack3ButtonClick();
-    void Attack4ButtonClick();
 };
 
 #endif

@@ -2,7 +2,9 @@
 #define POKEMON_HPP
 
 #include <string>
+#include "raylib.h"
 #include "PokemonSpecies.hpp"
+#include "DamageDetails.hpp"
 
 class Pokemon
 {
@@ -21,10 +23,9 @@ public:
 
     std::vector<Move> moves;
 
-    bool isFainted() const
-    {
-        return currentHP <= 0;
-    }
+    bool isFainted() const { return currentHP <= 0; }
+
+    DamageDetails TakeDamage(Move& move, Pokemon& target);
 
     void CalculateStats();
     int CalculateNonHpStat(int base, int iv, int ev, int level)

@@ -10,6 +10,7 @@
 #include "src/states/MainMenuState.hpp"
 #include "src/components/Sprite.hpp"
 #include "src/managers/InputManager.hpp"
+#include "src/managers/DataManager.hpp"
 
 class Game
 {
@@ -24,7 +25,6 @@ private:
     int screenHeight;
 
     InputMode currentInputMode = GAMEPLAY;
-    
     
     std::stack<State*> states;
     std::map<std::string, Sprite> assets;

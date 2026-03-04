@@ -2,7 +2,7 @@
 #define MOVE_DATA_HPP
 
 #include <string>
-#include "Type.hpp"
+#include "TypeSystem.hpp"
 
 
 enum class MoveCategory

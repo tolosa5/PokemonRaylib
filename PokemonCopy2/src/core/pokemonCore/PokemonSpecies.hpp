@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "Type.hpp"
+#include "TypeSystem.hpp"
 #include "Stats.hpp"
 #include "Move.hpp"
 #include "MoveData.hpp"

@@ -26,6 +26,7 @@ void Game::Initialize(int width, int height, const char* title)
     
     InitStates();
     ImportAssets();
+    //DataManager::GetInstance().LoadAll();
 }
 
 void Game::InitializeWindow(int width, int height, const char* title)
