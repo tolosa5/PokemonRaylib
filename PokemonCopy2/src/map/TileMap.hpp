@@ -39,6 +39,7 @@ public:
     void LoadFromFile(const std::string& filename);
 
     Texture2D* GetTextureSheet() { return &tileTextureSheet; }
+    std::vector<std::vector<std::vector<Tile*>>>& GetMap() { return map; }
 };
 
 #endif

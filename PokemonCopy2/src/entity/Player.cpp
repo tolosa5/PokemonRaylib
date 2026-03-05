@@ -2,7 +2,7 @@
 
 void Player::InitVariables()
 {
-    
+
 }
 
 void Player::InitComponents(Texture2D& texture)
@@ -91,8 +91,18 @@ void Player::LoadAnimations()
 
 void Player::Interact()
 {
+    interactPoint = movementComponent->currentPos + 
+        movementComponent->lastDirection * Utils::TILE_SIZE();
+    onPlayerInteraction.Invoke(interactPoint);
 }
 
 void Player::OpenMenu()
 {
+
+}
+
+void Player::AddPokemonToParty(Pokemon pokemon)
+{
+    party.push_back(pokemon);
+    onPokemonAdded.Invoke(pokemon);
 }

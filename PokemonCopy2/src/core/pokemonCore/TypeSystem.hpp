@@ -2,7 +2,6 @@
 #define TYPESYSTEM_HPP
 
 #include "nlohmann/json.hpp"
-#include "src/managers/DataManager.hpp"
 #include <fstream>
 #include <iostream>
 

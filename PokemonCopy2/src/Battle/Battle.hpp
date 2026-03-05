@@ -30,7 +30,7 @@ private:
 
     void BattleButtonClick();
     void BagButtonClick();
-    void PkmnButtonClick(bool postFeinted = false);
+    void OpenPkmnTab(bool postFeinted = false);
     void RunButtonClick();
     void Attack1ButtonClick();
     void Attack2ButtonClick();

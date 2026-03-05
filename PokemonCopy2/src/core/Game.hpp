@@ -11,6 +11,7 @@
 #include "src/components/Sprite.hpp"
 #include "src/managers/InputManager.hpp"
 #include "src/managers/DataManager.hpp"
+#include "src/core/pokemonCore/TypeSystem.hpp"
 
 class Game
 {

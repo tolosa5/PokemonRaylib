@@ -2,14 +2,15 @@
 #define DATAMANAGER_HPP
 
 #include <unordered_map>
-#include "src/core/pokemonCore/Pokemon.hpp"
+#include "nlohmann/json.hpp"
 #include "src/core/pokemonCore/PokemonSpecies.hpp"
 #include "src/core/pokemonCore/MoveData.hpp"
-#include "nlohmann/json.hpp"
 #include <fstream>
 #include <iostream>
 
 using json = nlohmann::json;
+
+class Pokemon;
 
 class DataManager
 {
@@ -30,6 +31,8 @@ public:
 
     Pokemon* CreatePokemon(int speciesId, int level);
     Pokemon GenerateWildPokemon(int speciesId, int level);
+    void WritePokemonToFile(const Pokemon& pokemon, const std::string& filePath);
+
 
     Type StringToType(const std::string& typeStr) const;
     MoveCategory StringToMoveCategory(

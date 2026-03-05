@@ -4,6 +4,7 @@
 #include <string>
 #include "TypeSystem.hpp"
 
+enum class Type;
 
 enum class MoveCategory
 {

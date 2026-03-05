@@ -1,5 +1,9 @@
 #include "DataManager.hpp"
+#include "src/core/pokemonCore/Pokemon.hpp"
+#include "src/core/pokemonCore/PokemonSpecies.hpp"
+#include "src/core/pokemonCore/MoveData.hpp"
 
+DataManager::DataManager() = default;
 
 void DataManager::LoadAll()
 {
@@ -85,6 +89,17 @@ Pokemon* DataManager::CreatePokemon(int speciesId, int level)
     }
 
     return pokemon;
+}
+
+void DataManager::WritePokemonToFile(const Pokemon& pokemon, const std::string& filePath)
+{
+    json j;
+    j["speciesId"] = pokemon.species->id;
+    j["level"] = pokemon.level;
+    j["currentHP"] = pokemon.currentHP;
+
+    std::ofstream file(filePath);
+    file << j.dump(4);
 }
 
 Type DataManager::StringToType(const std::string& typeStr) const

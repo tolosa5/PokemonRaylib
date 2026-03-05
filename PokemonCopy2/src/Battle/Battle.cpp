@@ -24,7 +24,7 @@ void Battle::BattleStart()
 
 void Battle::PokemonFeinted(Pokemon& faintedPokemon)
 {
-    PkmnButtonClick(true);
+    OpenPkmnTab(true);
 }
 
 void Battle::ChangePokemon(Pokemon& newPokemon)
@@ -44,7 +44,7 @@ void Battle::BagButtonClick()
 
 }
 
-void Battle::PkmnButtonClick(bool postFeinted)
+void Battle::OpenPkmnTab(bool postFeinted)
 {
 
 }

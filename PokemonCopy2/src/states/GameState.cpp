@@ -15,6 +15,16 @@ void GameState::InitPlayer()
     player = new Player(textures["PLAYER_SHEET"], 
         {(float)(GetScreenWidth() / 2), 
             (float)(GetScreenHeight() / 2)});
+
+    player->onMove.Subscribe(
+        [&](Vector2 position, Vector2 direction, Entity* entity) {
+            CheckEntityCollision(position, direction, entity);
+        });
+
+    player->onPlayerInteraction.Subscribe(
+        [&](Vector2 targetPos) {
+            CheckInteraction(targetPos);
+        });
 }
 
 void GameState::InitFonts()
@@ -136,6 +146,44 @@ void GameState::UpdateUIInputs(float deltaTime)
     pauseMenu->UpdateInputs();
     if (IsKeyPressed(KEY_X))
         ClosePauseMenu();
+}
+
+void GameState::CheckEntityCollision(Vector2 position, Vector2 targetPos, Entity* entity)
+{
+    int targetTileX = targetPos.x / Utils::TILE_SIZE();
+    int targetTileY = targetPos.y / Utils::TILE_SIZE();
+
+    if (tileMap->GetMap()[targetTileX][targetTileY][0]->HasCollision())
+        entity->SetCanMove(false);
+    else
+        entity->SetCanMove(true);
+    
+}
+
+void GameState::CheckInteraction(Vector2 targetPos)
+{
+    int targetTileX = targetPos.x / Utils::TILE_SIZE();
+    int targetTileY = targetPos.y / Utils::TILE_SIZE();
+
+    if (tileMap->GetMap()[targetTileX][targetTileY][0]->
+        GetType() == TileType::INTERACTABLE)
+    {
+        
+    }  
+    else
+    {
+        for (IInteractable* interactable : interactables)
+        {
+            if (CheckCollisionPointRec(targetPos, interactable->
+                GetCollider()->collider) && 
+                interactable->IsInteractable())
+            {
+                interactable->Interact();
+                return;
+            }
+        }
+    }
+        
 }
 
 void GameState::OpenPauseMenu()

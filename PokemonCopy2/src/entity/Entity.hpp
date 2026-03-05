@@ -4,24 +4,26 @@
 #include "raylib.h"
 #include "src/components/MovementComponent.hpp"
 #include "src/components/AnimationComponent.hpp"
-#include "src/components/ColliderComponent.hpp"
 #include "src/components/Sprite.hpp"
 #include "src/utils/AnimationSystem.hpp"
+#include "src/utils/Event.hpp"
 #include "src/utils/Utils.hpp"
+#include "src/core/interfaces/ICollidable.hpp"
 
 
-class Entity
+class Entity : public ICollidable
 {
 
 protected:
 
     Sprite sprite;
-
     MovementComponent* movementComponent;
     AnimationComponent* animationComponent;
-    ColliderComponent* colliderComponent;
 
 public:
+    //position, target position, entity
+    Event<Vector2, Vector2, Entity*> onMove; 
+
     Entity();
     virtual ~Entity();
 
@@ -35,6 +37,7 @@ public:
     virtual void Draw();
     virtual void SetPosition(const Vector2 position);
     virtual void Move(const Vector2 direction);
+    void SetCanMove(bool canMove) { movementComponent->moving = canMove; }
 };
 
 #endif

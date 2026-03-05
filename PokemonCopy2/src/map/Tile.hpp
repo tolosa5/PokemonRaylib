@@ -8,7 +8,7 @@
 enum TileType
 {
     DEFAULT = 0,
-    SOLID = 1,
+    INTERACTABLE = 1,
     COUNT
 };
 
@@ -29,10 +29,12 @@ public:
         short type = TileType::DEFAULT);
     virtual ~Tile();
 
-    const std::string GetAsString() const;
-
     void Update();
     void Draw();
+
+    const std::string GetAsString() const;
+    const bool HasCollision() const { return collision; }
+    const short GetType() const { return type; }
 };
 
 #endif

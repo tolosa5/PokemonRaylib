@@ -27,6 +27,7 @@ void Game::Initialize(int width, int height, const char* title)
     InitStates();
     ImportAssets();
     //DataManager::GetInstance().LoadAll();
+    TypeSystem::InitTypeChart("assets/data/types.json");
 }
 
 void Game::InitializeWindow(int width, int height, const char* title)

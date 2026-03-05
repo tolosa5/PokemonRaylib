@@ -76,15 +76,6 @@ void Entity::Move(const Vector2 direction)
         movementComponent->targetPos.y = 
             movementComponent->currentPos.y + direction.y * Utils::TILE_SIZE();
 
-        /*
-        // Collision detection with the map
-        int tileX = (movementComponent->targetPos.x / Utils::TILE_SIZE());
-        int tileY = (movementComponent->targetPos.y / Utils::TILE_SIZE());
-
-        if (map[tileX][tileY] == 1) // Assuming 1 represents a wall or obstacle
-            return; // Don't move if the target tile is an obstacle
-        */
-        
-        movementComponent->moving = true;
+        onMove.Invoke(sprite.position, movementComponent->targetPos, this);
     }
 }

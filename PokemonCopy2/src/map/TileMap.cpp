@@ -70,6 +70,11 @@ void TileMap::AddTile(const unsigned x, const unsigned y,
     {
         if (map[x][y][z] == nullptr)
         {
+            if (type == 1)
+            {
+                
+            }
+            
             std::cout << "Added tile at: " << x << ", " << y << std::endl;
             map[x][y][z] = new Tile(x, y, gridSizeF, tileTextureSheet, 
                 sourceRect, collision, type);

@@ -1,0 +1,29 @@
+{
+    "pokemonParty": [
+        {
+            "speciesId": 1,
+            "level": 5,
+            "currentHP": 20,
+            "maxHP": 20,
+            "attack": 10,
+            "defense": 10,
+            "speed": 10,
+            "moves": [
+                {
+                    "name": "Tackle",
+                    "type": "Normal",
+                    "category": "Physical",
+                    "power": 40,
+                    "accuracy": 100
+                },
+                {
+                    "name": "Growl",
+                    "type": "Normal",
+                    "category": "Status",
+                    "power": 0,
+                    "accuracy": 100
+                }
+            ]
+        }
+    ]
+}

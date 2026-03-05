@@ -1,4 +1,8 @@
 #include "TypeSystem.hpp"
+#include "src/managers/DataManager.hpp"
+
+float TypeSystem::typeChart[static_cast<int>(Type::COUNT)]
+    [static_cast<int>(Type::COUNT)] = {};
 
 void TypeSystem::InitTypeChart(const std::string& filePath)
 {

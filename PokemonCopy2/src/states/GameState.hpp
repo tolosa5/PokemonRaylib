@@ -5,7 +5,7 @@
 #include "src/managers/InputManager.hpp"
 #include "src/ui/PauseMenu.hpp"
 #include "src/map/TileMap.hpp"
-
+#include "src/core/interfaces/IInteractable.hpp"
 
 class GameState : public State
 {
@@ -17,6 +17,7 @@ private:
     bool isPaused;
 
     TileMap* tileMap;
+    std::vector<IInteractable*> interactables;
 
 protected:
     
@@ -36,6 +37,9 @@ public:
     void UpdateInputs(float deltaTime) override;
     void UpdateGameplayInputs(float deltaTime);
     void UpdateUIInputs(float deltaTime);
+    void CheckEntityCollision(Vector2 position, 
+        Vector2 targetPos, Entity* entity = nullptr);
+    void CheckInteraction(Vector2 targetPos);
     void OpenPauseMenu();
     void ClosePauseMenu();
 };

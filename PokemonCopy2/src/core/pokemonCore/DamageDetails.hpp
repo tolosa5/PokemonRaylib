@@ -4,9 +4,9 @@
 class DamageDetails
 {
 public:
-    bool fainted;
     float critical;
     float typeEffectiveness;
+    bool fainted;
 };
 
 #endif
