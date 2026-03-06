@@ -19,6 +19,7 @@ public:
     std::vector<Pokemon> party;
     Event<const Pokemon&> onPokemonAdded;
     Event<Vector2> onPlayerInteraction;
+    Event<Vector2> onPlayerMove;
 
 
     Player(Texture2D& texture, Vector2 position);
@@ -26,6 +27,7 @@ public:
 
     void Update(float deltaTime) override;
     void Draw() override;
+    void Move(const Vector2 direction) override;
     void LoadAnimations();
     void Interact();
     void OpenMenu();

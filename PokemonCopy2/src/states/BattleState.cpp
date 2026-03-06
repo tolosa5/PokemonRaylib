@@ -31,9 +31,14 @@ void BattleState::InitButtons()
 
 }
 
-BattleState::BattleState(std::stack<State*>* states, float gridSize) : 
+BattleState::BattleState(std::stack<State*>* states, std::vector<Pokemon> playerParty, 
+    std::vector<Pokemon> enemyParty, BattleType battleType) : 
     State(states, gridSize)
 {
+    this->playerParty = playerParty;
+    this->enemyParty = enemyParty;
+    this->battleType = battleType;
+
     InitTextures();
     InitPlayer();
     InitFonts();
@@ -42,11 +47,12 @@ BattleState::BattleState(std::stack<State*>* states, float gridSize) :
 
 BattleState::~BattleState()
 {
-
+    delete battle;
 }
 
 void BattleState::Update(float deltaTime)
 {
+    battle->Update();
     UpdateButtons();
     UpdateGui();
     UpdateBattleInputs();
@@ -54,7 +60,14 @@ void BattleState::Update(float deltaTime)
 
 void BattleState::Draw()
 {
+    battle->Draw();
     DrawButtons();
+}
+
+void BattleState::NewBattle()
+{
+    // Initialize a new battle
+    battle = new Battle(playerParty, enemyParty, battleType);
 }
 
 void BattleState::DrawButtons()

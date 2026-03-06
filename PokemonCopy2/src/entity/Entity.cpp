@@ -76,6 +76,6 @@ void Entity::Move(const Vector2 direction)
         movementComponent->targetPos.y = 
             movementComponent->currentPos.y + direction.y * Utils::TILE_SIZE();
 
-        onMove.Invoke(sprite.position, movementComponent->targetPos, this);
+        onEntityMove.Invoke(sprite.position, movementComponent->targetPos, this);
     }
 }

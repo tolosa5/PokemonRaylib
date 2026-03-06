@@ -16,7 +16,7 @@ void GameState::InitPlayer()
         {(float)(GetScreenWidth() / 2), 
             (float)(GetScreenHeight() / 2)});
 
-    player->onMove.Subscribe(
+    player->onEntityMove.Subscribe(
         [&](Vector2 position, Vector2 direction, Entity* entity) {
             CheckEntityCollision(position, direction, entity);
         });
@@ -24,6 +24,11 @@ void GameState::InitPlayer()
     player->onPlayerInteraction.Subscribe(
         [&](Vector2 targetPos) {
             CheckInteraction(targetPos);
+        });
+
+    player->onPlayerMove.Subscribe(
+        [&](Vector2 targetPos) {
+            CheckPlayerMove(targetPos);
         });
 }
 
@@ -153,6 +158,9 @@ void GameState::CheckEntityCollision(Vector2 position, Vector2 targetPos, Entity
     int targetTileX = targetPos.x / Utils::TILE_SIZE();
     int targetTileY = targetPos.y / Utils::TILE_SIZE();
 
+    std::cout << "Checking collision at: " << targetPos.x << 
+        ", " << targetPos.y << std::endl;
+
     if (tileMap->GetMap()[targetTileX][targetTileY][0]->HasCollision())
         entity->SetCanMove(false);
     else
@@ -160,23 +168,39 @@ void GameState::CheckEntityCollision(Vector2 position, Vector2 targetPos, Entity
     
 }
 
+void GameState::CheckPlayerMove(Vector2 targetPos)
+{
+    int targetTileX = targetPos.x / Utils::TILE_SIZE();
+    int targetTileY = targetPos.y / Utils::TILE_SIZE();
+
+    std::cout << "Player moved to: " << targetPos.x << 
+        ", " << targetPos.y << std::endl;
+
+    Tile* tile = tileMap->GetMap()[targetTileX][targetTileY][0];
+    if (tile->GetType() == TileType::GRASS)
+        player->SetCanMove(false);
+    else if (tile->GetType() == TileType::AREA_CHANGE)
+        player->SetCanMove(true);
+}
+
 void GameState::CheckInteraction(Vector2 targetPos)
 {
     int targetTileX = targetPos.x / Utils::TILE_SIZE();
     int targetTileY = targetPos.y / Utils::TILE_SIZE();
 
-    if (tileMap->GetMap()[targetTileX][targetTileY][0]->
-        GetType() == TileType::INTERACTABLE)
+    Tile* tile = tileMap->GetMap()[targetTileX][targetTileY][0];
+    if (tile->GetType() == TileType::INTERACTABLE)
     {
-        
+        PokeballTile* pokeballTile = static_cast<PokeballTile*>(tile);
+        pokeballTile->Interact();
     }  
     else
     {
         for (IInteractable* interactable : interactables)
         {
-            if (CheckCollisionPointRec(targetPos, interactable->
-                GetCollider()->collider) && 
-                interactable->IsInteractable())
+            bool collision = CheckCollisionPointRec(targetPos, 
+                interactable->GetCollider()->collider);
+            if (collision && interactable->IsInteractable())
             {
                 interactable->Interact();
                 return;
@@ -184,6 +208,23 @@ void GameState::CheckInteraction(Vector2 targetPos)
         }
     }
         
+}
+
+void GameState::AreaChange()
+{
+    //area change
+}
+
+void GameState::StartWildBattle(Pokemon& wildPokemon)
+{
+    states->push(new BattleState(states, player->GetParty(), 
+        std::vector<Pokemon>{wildPokemon}, BattleType::WILD));
+}
+
+void GameState::StartTrainerBattle(std::vector<Pokemon>& trainerParty)
+{
+    states->push(new BattleState(states, player->GetParty(), 
+        trainerParty, BattleType::TRAINER));
 }
 
 void GameState::OpenPauseMenu()

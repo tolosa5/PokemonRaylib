@@ -9,6 +9,8 @@ enum TileType
 {
     DEFAULT = 0,
     INTERACTABLE = 1,
+    GRASS = 2,
+    AREA_CHANGE = 3,
     COUNT
 };
 

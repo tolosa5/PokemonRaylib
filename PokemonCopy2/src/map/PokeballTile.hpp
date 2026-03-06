@@ -2,10 +2,11 @@
 #define POKEBALLTILE_HPP
 
 #include "Tile.hpp"
-#include "src/core/IInteractable.hpp"
+#include "src/core/interfaces/IInteractable.hpp"
 
 class PokeballTile : public Tile, IInteractable
 {
+public:
     void Interact() override;
 };
 

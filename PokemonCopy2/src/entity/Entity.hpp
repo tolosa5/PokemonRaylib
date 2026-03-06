@@ -22,7 +22,7 @@ protected:
 
 public:
     //position, target position, entity
-    Event<Vector2, Vector2, Entity*> onMove; 
+    Event<Vector2, Vector2, Entity*> onEntityMove; 
 
     Entity();
     virtual ~Entity();

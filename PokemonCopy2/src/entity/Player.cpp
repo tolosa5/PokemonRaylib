@@ -76,6 +76,16 @@ void Player::Draw()
     Entity::Draw();
 }
 
+void Player::Move(const Vector2 direction)
+{
+    Entity::Move(direction);
+
+    int targetTileX = movementComponent->targetPos.x / Utils::TILE_SIZE();
+    int targetTileY = movementComponent->targetPos.y / Utils::TILE_SIZE();
+
+    onPlayerMove.Invoke(direction);
+}
+
 void Player::LoadAnimations()
 {
     animationComponent->AddAnimation("WALK_DOWN", 0, 3, 0.2f);

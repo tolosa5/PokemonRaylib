@@ -2,9 +2,11 @@
 #define GAMESTATE_HPP
 
 #include "src/states/State.hpp"
+#include "src/states/BattleState.hpp"
 #include "src/managers/InputManager.hpp"
 #include "src/ui/PauseMenu.hpp"
 #include "src/map/TileMap.hpp"
+#include "src/map/PokeballTile.hpp"
 #include "src/core/interfaces/IInteractable.hpp"
 
 class GameState : public State
@@ -39,7 +41,13 @@ public:
     void UpdateUIInputs(float deltaTime);
     void CheckEntityCollision(Vector2 position, 
         Vector2 targetPos, Entity* entity = nullptr);
+    void CheckPlayerMove(Vector2 targetPos);
     void CheckInteraction(Vector2 targetPos);
+    void AreaChange();
+
+    void StartWildBattle(Pokemon& wildPokemon);
+    void StartTrainerBattle(std::vector<Pokemon>& trainerParty);
+
     void OpenPauseMenu();
     void ClosePauseMenu();
 };

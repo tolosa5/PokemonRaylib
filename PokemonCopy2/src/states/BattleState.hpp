@@ -3,6 +3,7 @@
 
 #include "src/states/State.hpp"
 #include "src/ui/ButtonGroup.hpp"
+#include "src/Battle/Battle.hpp"
 
 class BattleState : public State
 {
@@ -13,6 +14,11 @@ private:
     Rectangle playerInfoBox;
     Rectangle enemyInfoBox;
     Font font;
+
+    std::vector<Pokemon> playerParty;
+    std::vector<Pokemon> enemyParty;
+    Battle* battle;
+    BattleType battleType;
     
     Texture2D buttonBaseTexture;
     Texture2D buttonHoverTexture;
@@ -35,7 +41,8 @@ public:
     ButtonGroup* buttonGroup;
     std::vector<Button*> buttonVector;
 
-    BattleState(std::stack<State*>* states, float gridSize);
+    BattleState(std::stack<State*>* states, std::vector<Pokemon> playerParty, 
+        std::vector<Pokemon> enemyParty, BattleType battleType);
     virtual ~BattleState();
 
     void InitTextures();
@@ -46,6 +53,7 @@ public:
     void Update(float deltaTime) override;
     void Draw() override;
 
+    void NewBattle();
     void DrawButtons();
     void UpdateButtons();
     void UpdateGui();
