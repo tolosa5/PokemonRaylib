@@ -217,13 +217,13 @@ void GameState::AreaChange()
 
 void GameState::StartWildBattle(Pokemon& wildPokemon)
 {
-    states->push(new BattleState(states, player->GetParty(), 
+    states->push(new BattleState(states, gridSize, player->GetParty(), 
         std::vector<Pokemon>{wildPokemon}, BattleType::WILD));
 }
 
 void GameState::StartTrainerBattle(std::vector<Pokemon>& trainerParty)
 {
-    states->push(new BattleState(states, player->GetParty(), 
+    states->push(new BattleState(states, gridSize, player->GetParty(), 
         trainerParty, BattleType::TRAINER));
 }
 

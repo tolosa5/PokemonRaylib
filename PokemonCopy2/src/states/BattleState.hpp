@@ -9,10 +9,6 @@ class BattleState : public State
 {
 private:
 
-    Rectangle textBox;
-    Rectangle attackSelectionBox;
-    Rectangle playerInfoBox;
-    Rectangle enemyInfoBox;
     Font font;
 
     std::vector<Pokemon> playerParty;
@@ -20,16 +16,9 @@ private:
     Battle* battle;
     BattleType battleType;
     
-    Texture2D buttonBaseTexture;
-    Texture2D buttonHoverTexture;
-    Texture2D textBoxTexture;
-    Texture2D attackSelectionBoxTexture;
-    Texture2D playerInfoBoxTexture;
-    Texture2D enemyInfoBoxTexture;
-
     void BattleButtonClick();
     void BagButtonClick();
-    void PkmnButtonClick(bool postFeinted = false);
+    void PkmnButtonClick(bool postFainted = false);
     void RunButtonClick();
     void Attack1ButtonClick();
     void Attack2ButtonClick();
@@ -37,11 +26,8 @@ private:
     void Attack4ButtonClick();
 
 public:
-    std::map<std::string, Button*> buttons;
-    ButtonGroup* buttonGroup;
-    std::vector<Button*> buttonVector;
-
-    BattleState(std::stack<State*>* states, std::vector<Pokemon> playerParty, 
+    
+    BattleState(std::stack<State*>* states, int gridSize, std::vector<Pokemon> playerParty, 
         std::vector<Pokemon> enemyParty, BattleType battleType);
     virtual ~BattleState();
 

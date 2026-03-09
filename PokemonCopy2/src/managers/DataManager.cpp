@@ -70,6 +70,18 @@ void DataManager::LoadPokemonSpeciesData(const std::string& filePath)
     }
 }
 
+void DataManager::LoadDialogues(const std::string& filePath)
+{
+    std::ifstream file(filePath);
+    json dialogueJson;
+    file >> dialogueJson;
+
+    for (const auto& [key, value] : dialogueJson.items())
+    {
+        dialogueMap[key] = value;
+    }
+}
+
 Pokemon* DataManager::CreatePokemon(int speciesId, int level)
 {
     const PokemonSpecies& species = GetPokemonSpeciesById(speciesId);

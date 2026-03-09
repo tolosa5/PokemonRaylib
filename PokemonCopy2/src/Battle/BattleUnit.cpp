@@ -1,9 +1,8 @@
 #include "BattleUnit.hpp"
 
-BattleUnit::BattleUnit()
-    : pokemon(nullptr), isPlayer(false), startPosition({0.0f, 0.0f}),
-      battlePosition({0.0f, 0.0f}), currentPosition({0.0f, 0.0f})
+BattleUnit::BattleUnit() : pokemon(nullptr), isPlayer(false)
 {
+    
 }
 
 BattleUnit::~BattleUnit() = default;
@@ -22,4 +21,13 @@ void BattleUnit::SetUp(Pokemon* pokemon, bool isPlayer)
 void BattleUnit::BattleStart()
 {
     currentPosition = battlePosition;
+}
+
+void BattleUnit::Draw()
+{
+    if (pokemon)
+    {
+        //Sprite sprite = pokemon->GetFrontSprite();
+        //DrawTexture(sprite.texture, currentPosition.x, currentPosition.y, WHITE);
+    }
 }

@@ -28,10 +28,12 @@ public:
     void LoadMoveData(const std::string& filePath);
     void LoadPokemonSpeciesData(const std::string& filePath);
     void LoadTypeChartData(const std::string& filePath);
+    void LoadDialogues(const std::string& filePath);
 
     Pokemon* CreatePokemon(int speciesId, int level);
     Pokemon GenerateWildPokemon(int speciesId, int level);
-    void WritePokemonToFile(const Pokemon& pokemon, const std::string& filePath);
+    void WritePokemonToFile(const Pokemon& pokemon, 
+        const std::string& filePath);
 
 
     Type StringToType(const std::string& typeStr) const;
@@ -49,6 +51,7 @@ private:
 
     std::unordered_map<int, PokemonSpecies> pokemonSpeciesMap;
     std::unordered_map<int, MoveData> moveMap;
+    std::unordered_map<std::string, std::string> dialogueMap;
 };
 
 #endif
