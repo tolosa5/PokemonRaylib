@@ -10,6 +10,7 @@ class BattleUnit
 private:
     Pokemon* pokemon;
     bool isPlayer;
+    bool active;
 
     Rectangle rect;
 
@@ -23,11 +24,13 @@ public:
 
     void SetUp(Pokemon* pokemon, bool isPlayer);
     void BattleStart();
+    void SetActive(bool active) { this->active = active; }
     void Draw();
 
     void PerformMoveAnimation(Move& move);
 
     Pokemon* GetPokemon() const { return pokemon; }
+    bool IsActive() const { return active; }
 };
 
 #endif

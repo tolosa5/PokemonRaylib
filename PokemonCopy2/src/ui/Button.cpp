@@ -3,7 +3,7 @@
 Button::Button(Rectangle rect, const std::string& text, 
     Font* font, Texture2D baseTexture, Texture2D hoverTexture,
     int fontSize, Color idleColor, 
-    Color hoverColor, Color activeColor)
+    Color hoverColor, Color activeColor, bool active)
 {
     this->rect = rect;
     this->state = IDLE;
@@ -21,6 +21,7 @@ Button::Button(Rectangle rect, const std::string& text,
 
     this->baseTexture = baseTexture;
     this->hoverTexture = hoverTexture;
+    this->active = active;
 }
 
 void Button::InitTextures()
@@ -31,11 +32,15 @@ void Button::InitTextures()
 
 Button::~Button()
 {
-    
+    UnloadTexture(baseTexture);
+    UnloadTexture(hoverTexture);
 }
 
 void Button::Draw()
 {
+    if (!active)
+        return;
+
     Color currentColor = idleColor;
     Texture2D currentTexture = baseTexture;
     switch (state)
@@ -87,6 +92,9 @@ void Button::Draw()
 
 void Button::Update()
 {
+    if (!active)
+        return;
+    
     if (state == HOVER)
     {
         if (IsKeyPressed(KEY_ENTER))

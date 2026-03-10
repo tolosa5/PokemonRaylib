@@ -37,6 +37,7 @@ public:
         GroupMode mode, int rows = 0, int columns = 0);
     ~ButtonGroup() = default;
 
+    void SetActive(bool active);
     void Update();
     void Draw();
     void GridSetup();

@@ -2,7 +2,7 @@
 
 Battle::Battle(std::vector<Pokemon> playerParty, 
     std::vector<Pokemon> enemyParty, BattleType battleType, Font font) 
-    : battleUI(*this, font)
+    : battleUI(*this, font, playerUnit, enemyUnit)
 {
     this->playerParty = playerParty;
     this->enemyParty = enemyParty;
@@ -22,85 +22,70 @@ void Battle::BattleStart()
     playerUnit.SetUp(&this->playerParty[0], true);
     enemyUnit.SetUp(&this->enemyParty[0], false);
 
+    battleUI.playerHud.SetData(playerUnit, battleUI.playerHudRect);
+    battleUI.enemyHud.SetData(enemyUnit, battleUI.enemyHudRect);
+
+    playerUnit.SetActive(false);
+    enemyUnit.SetActive(true);
+
+    WaitTime(1.0f);
+
     std::string dialogue = currentBattleType == BattleType::WILD ? 
         "A wild " + enemyUnit.GetPokemon()->species->name + " appeared!" :
         "Trainer sent out " + enemyUnit.GetPokemon()->species->name + "!";
 
-    battleUI.dialogueBox.SetDialogue(dialogue);
+    battleUI.dialogueBox->SetDialogue(dialogue);
+    WaitTime(1.5f);
+    //Throw pokemon
+    playerUnit.SetActive(true);
+    WaitTime(0.5f);
+    currentBattleState = BattleFlowState::PLAYER_ACTION;
+    currentPlayerAction = PlayerAction::IDLE;
+    startButtonGroup->SetActive(true);
 }
 
 void Battle::Update()
 {
     battleUI.Update();
+    
 }
 
 void Battle::Draw()
 {
-    battleUI.Draw();
-    switch (currentBattleState)
-    {
-    case BattleFlowState::NONE:
-        /* code */
-        break;
-
-    case BattleFlowState::START:
-        /* code */
-        break;
-
-    case BattleFlowState::DECISION_TIME:
-        playerUnit.Draw();
-        enemyUnit.Draw();
-        break;
-
-    case BattleFlowState::PLAYER_TURN:
-        playerUnit.Draw();
-        enemyUnit.Draw();
-        break;
-
-    case BattleFlowState::ENEMY_TURN:
-        playerUnit.Draw();
-        enemyUnit.Draw();
-        break;
-
-    case BattleFlowState::BUSY:
-        playerUnit.Draw();
-        enemyUnit.Draw();
-        break;
-
-    case BattleFlowState::WON:
-        playerUnit.Draw();
-        break;
-
-    case BattleFlowState::LOST:
-        enemyUnit.Draw();
-        break;
-
-    default:
-        break;
-    }
+    battleUI.Draw(currentBattleState);
 }
 
 #pragma region Battle Logic
 
-void Battle::StartDialogueAndAnimation(
-    const std::string& dialogue, float animationDuration)
+void Battle::StartAnimation()
 {
-    if (currentBattleType == BattleType::WILD)
-    {
-        
-    }
     
+}
+
+void Battle::SpeedTiers(Pokemon& playerPokemon, Pokemon& enemyPokemon)
+{
+    if (playerPokemon.stats.speed > enemyPokemon.stats.speed)
+    {
+        currentBattleState = BattleFlowState::PLAYER_TURN;
+    }
+    else
+    {
+        currentBattleState = BattleFlowState::ENEMY_TURN;
+        HandleEnemyTurn();
+    }
+}
+
+void Battle::HandleEnemyTurn()
+{
+    WaitTime(1.0f);
+
+    DamageHandling(*enemyUnit.GetPokemon(), *playerUnit.GetPokemon(), 
+        enemyUnit.GetPokemon()->moves[0], false);
 }
 
 void Battle::PlayerUseItem()
 {
     
-}
-
-void Battle::HandleEnemyTurn()
-{
-    DamageHandling(*enemyUnit.GetPokemon(), *playerUnit.GetPokemon(), 
-        enemyUnit.GetPokemon()->moves[0], false);
 }
 
 void Battle::ChangePokemon(Pokemon& newPokemon)
@@ -111,15 +96,13 @@ void Battle::ChangePokemon(Pokemon& newPokemon)
 void Battle::EnemyLosePokemon()
 {
     std::vector<Pokemon>& aliveEnemyParty = enemyParty;
-    for (auto& pokemon : enemyParty)
-    {
-        if (pokemon.isFainted())
-        {
-            aliveEnemyParty.erase(std::remove(
-                aliveEnemyParty.begin(), aliveEnemyParty.end(), pokemon), 
-                aliveEnemyParty.end());
-        }
-    }
+    aliveEnemyParty.erase(
+        std::remove_if(aliveEnemyParty.begin(), aliveEnemyParty.end(),
+            [](const Pokemon& pokemon)
+            {
+                return pokemon.isFainted();
+            }),
+        aliveEnemyParty.end());
 
     if (!aliveEnemyParty.empty())
         EnemyChangePokemon(aliveEnemyParty);
@@ -132,7 +115,7 @@ void Battle::EnemyChangePokemon(std::vector<Pokemon>& aliveEnemyParty)
     Pokemon& newPokemon = aliveEnemyParty[0];
     enemyUnit.SetUp(&newPokemon, false);
     std::string dialogue = "Trainer sent out " + newPokemon.species->name + "!";
-    StartDialogueAndAnimation(dialogue, 2.0f);
+    battleUI.dialogueBox->SetDialogue(dialogue);
 }
 
 void Battle::DamageHandling(Pokemon& attacker, Pokemon& target, 
@@ -141,12 +124,27 @@ void Battle::DamageHandling(Pokemon& attacker, Pokemon& target,
     DamageDetails details = target.TakeDamage(move, attacker);
     
     if (details.critical)
-        std::cout << "A critical hit!" << std::endl;
+    {
+        std::string dialogue = "A critical hit!";
+        battleUI.dialogueBox->SetDialogue(dialogue);
+
+        WaitTime(0.5f);
+    }
 
     if (details.typeEffectiveness > 1.0f)
-        std::cout << "It's super effective!" << std::endl;
+    {
+        std::string dialogue = "It's super effective!";
+        battleUI.dialogueBox->SetDialogue(dialogue);
+
+        WaitTime(0.5f);
+    }
     else if (details.typeEffectiveness < 1.0f)
-        std::cout << "It's not very effective..." << std::endl;
+    {
+        std::string dialogue = "It's not very effective...";
+        battleUI.dialogueBox->SetDialogue(dialogue);
+
+        WaitTime(0.5f);
+    }
 
     if (details.fainted)
     {
@@ -159,6 +157,11 @@ void Battle::DamageHandling(Pokemon& attacker, Pokemon& target,
 
 void Battle::PlayerPokemonFainted(Pokemon& faintedPokemon)
 {
+    std::string dialogue = faintedPokemon.species->name + " fainted!";
+    battleUI.dialogueBox->SetDialogue(dialogue);
+
+    WaitTime(2.0f);
+
     for (auto& pokemon : playerParty)
     {
         if (!pokemon.isFainted())
@@ -173,6 +176,11 @@ void Battle::PlayerPokemonFainted(Pokemon& faintedPokemon)
 
 void Battle::EnemyPokemonFainted(Pokemon& faintedPokemon)
 {
+    std::string dialogue = "Enemy " + faintedPokemon.species->name + " fainted!";
+    battleUI.dialogueBox->SetDialogue(dialogue);
+
+    WaitTime(2.0f);
+
     //Give exp, check for level up, etc.
 
     for (auto& pokemon : enemyParty)
@@ -216,17 +224,21 @@ void Battle::EndBattle(EndBattleReason endReason)
 
 void Battle::BattleButtonClick()
 {
-
+    currentPlayerAction = PlayerAction::ATTACK;
+    startButtonGroup->SetActive(false);
+    battleButtonGroup->SetActive(true);
 }
 
 void Battle::BagButtonClick()
 {
-    
+    currentPlayerAction = PlayerAction::BAG;
+    startButtonGroup->SetActive(false);
 }
 
 void Battle::OpenPkmnTab(bool postFainted)
 {
-    
+    currentPlayerAction = PlayerAction::POKEMON;
+    startButtonGroup->SetActive(false);
 }
 
 void Battle::RunButtonClick()

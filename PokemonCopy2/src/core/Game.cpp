@@ -43,7 +43,7 @@ void Game::InitializeWindow(int width, int height, const char* title)
 
 void Game::ImportAssets()
 {
-    //assets["player"] = Sprite(LoadTexture("assets/player.png"), {100, 100});
+    
 }
 
 void Game::InitStates()

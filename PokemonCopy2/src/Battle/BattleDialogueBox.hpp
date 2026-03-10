@@ -6,10 +6,18 @@
 
 class BattleDialogueBox
 {
+private:
+    Texture textBoxTexture;
+    Rectangle textBox;
+    Font font;
+    bool active;
+    std::string currentDialogue;
+
 public:
-    BattleDialogueBox();
+    BattleDialogueBox(Rectangle textBox, Texture textBoxTexture, Font font);
     ~BattleDialogueBox();
 
+    void SetActive(bool active) { this->active = active; }
     void Update();
     void Draw();
 

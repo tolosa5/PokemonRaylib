@@ -1,6 +1,6 @@
 #include "BattleUnit.hpp"
 
-BattleUnit::BattleUnit() : pokemon(nullptr), isPlayer(false)
+BattleUnit::BattleUnit() : pokemon(nullptr), isPlayer(false), active(true)
 {
     
 }
@@ -25,7 +25,7 @@ void BattleUnit::BattleStart()
 
 void BattleUnit::Draw()
 {
-    if (pokemon)
+    if (pokemon && active)
     {
         //Sprite sprite = pokemon->GetFrontSprite();
         //DrawTexture(sprite.texture, currentPosition.x, currentPosition.y, WHITE);

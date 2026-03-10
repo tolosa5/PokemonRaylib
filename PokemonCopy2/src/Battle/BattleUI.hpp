@@ -1,21 +1,46 @@
 #ifndef BATTLEUI_HPP
 #define BATTLEUI_HPP
 
-#include "Battle.hpp"
 #include "BattleDialogueBox.hpp"
+#include "BattleHud.hpp"
+
+class Battle;
+enum class BattleFlowState;
+enum class PlayerAction;
 
 class BattleUI
 {
 public:
-    Font font;
+    BattleDialogueBox* dialogueBox;
+    BattleHud playerHud;
+    BattleHud enemyHud;
+    BattleFlowState currentBattleState;
+    PlayerAction currentPlayerAction;
+    BattleUnit& playerUnit;
+    BattleUnit& enemyUnit;
 
-    BattleUI(Battle& battle, Font font);
+    Font font;
+    Rectangle playerHudRect;
+    Rectangle enemyHudRect;
+    Rectangle textBox;
+    Rectangle attackSelectionBox;
+
+    Texture2D playerHudTexture;
+    Texture2D enemyHudTexture;
+    Texture2D buttonBaseTexture;
+    Texture2D buttonHoverTexture;
+    Texture2D textBoxTexture;
+    Texture2D attackSelectionBoxTexture;
+
+    BattleUI(Battle& battle, Font font, 
+        BattleUnit& playerUnit, BattleUnit& enemyUnit);
     ~BattleUI();
 
     void Update();
-    void Draw();
-
-    BattleDialogueBox dialogueBox;
+    void Draw(BattleFlowState currentBattleState);
+    void StartDraw();
+    void PlayerActionDraw();
+    void PlayerTurnDraw();
 };
 
 #endif

@@ -10,6 +10,15 @@ ButtonGroup::ButtonGroup(std::vector<Button*>& buttons,
     GridSetup();
 }
 
+void ButtonGroup::SetActive(bool active)
+{
+    for (Button* button : buttons)
+    {
+        if (button)
+            button->SetActive(active);
+    }
+}
+
 void ButtonGroup::Update()
 {
     if (InputManager::GetCurrentMode() != UI)

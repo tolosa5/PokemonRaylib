@@ -11,10 +11,9 @@ enum class BattleFlowState
 {
     NONE,
     START,
-    DECISION_TIME,
+    PLAYER_ACTION,
     PLAYER_TURN,
     ENEMY_TURN,
-    BUSY,
     WON,
     LOST
 };
@@ -32,24 +31,23 @@ enum class EndBattleReason
     ENEMY_WON
 };
 
+enum class PlayerAction
+{
+    IDLE,
+    ATTACK,
+    BAG,
+    POKEMON,
+    TURN
+};
+
 class Battle
 {
 public:
     BattleUnit playerUnit;
     BattleUnit enemyUnit;
 
-    Rectangle textBox;
-    Rectangle attackSelectionBox;
-    Rectangle playerInfoBox;
-    Rectangle enemyInfoBox;
-
-    Texture2D buttonBaseTexture;
-    Texture2D buttonHoverTexture;
-    Texture2D textBoxTexture;
-    Texture2D attackSelectionBoxTexture;
-    Texture2D playerInfoBoxTexture;
-    Texture2D enemyInfoBoxTexture;
-
+    BattleUI battleUI;
+    
     std::map<std::string, Button*> buttons;
     ButtonGroup* startButtonGroup;
     ButtonGroup* battleButtonGroup;
@@ -60,6 +58,7 @@ public:
 
     BattleFlowState currentBattleState;
     BattleType currentBattleType;
+    PlayerAction currentPlayerAction;
 
     std::vector<Pokemon> playerParty;
     std::vector<Pokemon> enemyParty;
@@ -84,12 +83,10 @@ public:
     void Attack4ButtonClick();
 
 private:
-    BattleUI battleUI;
-
-
-    void StartDialogueAndAnimation(
-        const std::string& dialogue, float animationDuration);
+    
+    void StartAnimation();
     void HandleEnemyTurn();
+    void SpeedTiers(Pokemon& playerPokemon, Pokemon& enemyPokemon);
     void PlayerUseItem();
     void ChangePokemon(Pokemon& newPokemon);
     void EnemyLosePokemon();
