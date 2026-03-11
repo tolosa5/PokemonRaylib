@@ -9,14 +9,17 @@ private:
     float duration;
     float startTime;
     bool active;
+    bool completed;
     bool repeats;
 
 public:
-    Timer(float duration, bool repeats = false, bool startActive = false);
+    Timer(float duration, bool repeats = false, 
+        bool startActive = false);
 
     void Activate();
     void Deactivate();
     void Update();
+    bool IsCompleted() const { return completed; }
 };
 
 #endif

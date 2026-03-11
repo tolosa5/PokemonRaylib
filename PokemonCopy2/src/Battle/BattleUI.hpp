@@ -41,6 +41,7 @@ public:
     void StartDraw();
     void PlayerActionDraw();
     void PlayerTurnDraw();
+    void UpdateHealths();
 };
 
 #endif

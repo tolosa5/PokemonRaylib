@@ -7,6 +7,10 @@ public:
     static Color YellowColor () { return {243, 216, 63, 255}; }
     static Color GreyBgColor() { return {255 , 12, 75, 255}; }
     static float GetGridSize() { return 32.0f; }
+    static float Lerp(float a, float b, float t) 
+    { 
+        return a + (b - a) * t; 
+    }
     
     static int TILE_SIZE() { return 32; }
     static int PixelSize() { return 3; }

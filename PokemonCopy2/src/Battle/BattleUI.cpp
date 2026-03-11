@@ -98,6 +98,7 @@ void BattleUI::PlayerActionDraw()
         enemyUnit.Draw();
         break;
     case PlayerAction::ATTACK:
+        
         DrawTextureRec(attackSelectionBoxTexture, attackSelectionBox, 
             {attackSelectionBox.x, attackSelectionBox.y}, WHITE);
         playerUnit.Draw();
@@ -110,7 +111,8 @@ void BattleUI::PlayerActionDraw()
         
         break;
     case PlayerAction::TURN:
-        
+        playerUnit.Draw();
+        enemyUnit.Draw();
         break;
     default:
         break;

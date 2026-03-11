@@ -5,10 +5,10 @@ Timer::Timer(float duration, bool repeats, bool startActive)
     this->duration = duration;
     this->repeats = repeats;
     this->active = false;
+    completed = false;
 
     if (startActive)
         Activate();
-
 }
 
 void Timer::Activate()
@@ -21,9 +21,9 @@ void Timer::Deactivate()
 {
     active = false;
     startTime = 0;
+    completed = false;
     if (repeats)
         Activate();
-    
 }
 
 void Timer::Update()
@@ -32,5 +32,8 @@ void Timer::Update()
         return;
     
     if (GetTime() - startTime >= duration)
+    {
+        completed = true;
         Deactivate();
+    }
 }

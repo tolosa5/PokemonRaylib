@@ -4,6 +4,12 @@
 #include "src/ui/ButtonGroup.hpp"
 #include "BattleUnit.hpp"
 #include "BattleUI.hpp"
+#include "BattleAction.hpp"
+#include "BattleTextAction.hpp"
+#include "UpdateBarAction.hpp"
+#include "src/utils/WaitUntil.hpp"
+#include <queue>
+#include <memory>
 #include <map>
 #include <vector>
 
@@ -40,9 +46,20 @@ enum class PlayerAction
     TURN
 };
 
+enum class DamageState
+{
+    START_ATTACK,
+    DAMAGE_ANIMATION,
+    DAMAGE_TEXTS,
+    END
+};
+
 class Battle
 {
 public:
+    std::queue<std::unique_ptr<BattleAction>> actionQueue;
+    BattleAction* currentAction = nullptr;
+
     BattleUnit playerUnit;
     BattleUnit enemyUnit;
 
@@ -59,6 +76,7 @@ public:
     BattleFlowState currentBattleState;
     BattleType currentBattleType;
     PlayerAction currentPlayerAction;
+    DamageState currentDamageState;
 
     std::vector<Pokemon> playerParty;
     std::vector<Pokemon> enemyParty;
@@ -85,13 +103,13 @@ public:
 private:
     
     void StartAnimation();
-    void HandleEnemyTurn();
+    void HandleEnemyTurn(Move selectedMove);
     void SpeedTiers(Pokemon& playerPokemon, Pokemon& enemyPokemon);
     void PlayerUseItem();
     void ChangePokemon(Pokemon& newPokemon);
     void EnemyLosePokemon();
     void EnemyChangePokemon(std::vector<Pokemon>& aliveEnemyParty);
-    void DamageHandling(Pokemon& attacker, Pokemon& target, 
+    void DamageHandling(BattleUnit& attacker, BattleUnit& target, 
         Move& move, bool isPlayerAttacking);
     void PlayerPokemonFainted(Pokemon& faintedPokemon);
     void EnemyPokemonFainted(Pokemon& faintedPokemon);

@@ -34,11 +34,14 @@ void Battle::BattleStart()
         "A wild " + enemyUnit.GetPokemon()->species->name + " appeared!" :
         "Trainer sent out " + enemyUnit.GetPokemon()->species->name + "!";
 
-    battleUI.dialogueBox->SetDialogue(dialogue);
-    WaitTime(1.5f);
-    //Throw pokemon
+    actionQueue.push(std::make_unique<BattleTextAction>(
+        dialogue, battleUI.dialogueBox, 2.0f));
+
+    std::string playerDialogue = "Go! " + playerUnit.GetPokemon()->species->name + "!";
+    actionQueue.push(std::make_unique<BattleTextAction>(
+        playerDialogue, battleUI.dialogueBox, 1.5f));
+
     playerUnit.SetActive(true);
-    WaitTime(0.5f);
     currentBattleState = BattleFlowState::PLAYER_ACTION;
     currentPlayerAction = PlayerAction::IDLE;
     startButtonGroup->SetActive(true);
@@ -47,7 +50,22 @@ void Battle::BattleStart()
 void Battle::Update()
 {
     battleUI.Update();
-    
+    if (!currentAction && !actionQueue.empty())
+    {
+        currentAction = actionQueue.front().release();
+        actionQueue.pop();
+        currentAction->Start();
+    }
+
+    if (currentAction)
+    {
+        currentAction->Update();
+        if (currentAction->Finished())
+        {
+            delete currentAction;
+            currentAction = nullptr;
+        }
+    }
 }
 
 void Battle::Draw()
@@ -65,22 +83,25 @@ void Battle::StartAnimation()
 void Battle::SpeedTiers(Pokemon& playerPokemon, Pokemon& enemyPokemon)
 {
     if (playerPokemon.stats.speed > enemyPokemon.stats.speed)
-    {
         currentBattleState = BattleFlowState::PLAYER_TURN;
-    }
     else
     {
         currentBattleState = BattleFlowState::ENEMY_TURN;
-        HandleEnemyTurn();
+        HandleEnemyTurn(enemyUnit.GetPokemon()->moves[0]);
     }
 }
 
-void Battle::HandleEnemyTurn()
+void Battle::HandleEnemyTurn(Move selectedMove)
 {
     WaitTime(1.0f);
 
-    DamageHandling(*enemyUnit.GetPokemon(), *playerUnit.GetPokemon(), 
-        enemyUnit.GetPokemon()->moves[0], false);
+    MoveData moveData = *selectedMove.data;
+    std::string dialogue = "Enemy " + enemyUnit.GetPokemon()->species->name + 
+        " used " + moveData.name + "!";
+    battleUI.dialogueBox->SetDialogue(dialogue);
+
+    currentDamageState = DamageState::START_ATTACK;
+    DamageHandling(enemyUnit, playerUnit, selectedMove, false);
 }
 
 void Battle::PlayerUseItem()
@@ -118,49 +139,56 @@ void Battle::EnemyChangePokemon(std::vector<Pokemon>& aliveEnemyParty)
     battleUI.dialogueBox->SetDialogue(dialogue);
 }
 
-void Battle::DamageHandling(Pokemon& attacker, Pokemon& target, 
+void Battle::DamageHandling(BattleUnit& attacker, BattleUnit& target, 
     Move& move, bool isPlayerAttacking)
 {
-    DamageDetails details = target.TakeDamage(move, attacker);
+    Pokemon& attackerPokemon = *attacker.GetPokemon();
+    Pokemon& targetPokemon = *target.GetPokemon();
     
+    std::string dialogue = (isPlayerAttacking ? "Your " : "Enemy ") + 
+        attackerPokemon.species->name + " used " + move.data->name + "!";
+
+    actionQueue.push(std::make_unique<BattleTextAction>(
+        dialogue, battleUI.dialogueBox, 1.5f));
+
+    DamageDetails details = target.GetPokemon()->TakeDamage(move, attackerPokemon);
+
+    actionQueue.push(std::make_unique<UpdateBarAction>(target));
+
     if (details.critical)
     {
         std::string dialogue = "A critical hit!";
-        battleUI.dialogueBox->SetDialogue(dialogue);
-
-        WaitTime(0.5f);
+        actionQueue.push(std::make_unique<BattleTextAction>(
+            dialogue, battleUI.dialogueBox, 1));
     }
 
     if (details.typeEffectiveness > 1.0f)
     {
         std::string dialogue = "It's super effective!";
-        battleUI.dialogueBox->SetDialogue(dialogue);
-
-        WaitTime(0.5f);
+        actionQueue.push(std::make_unique<BattleTextAction>(
+            dialogue, battleUI.dialogueBox, 1));
     }
     else if (details.typeEffectiveness < 1.0f)
     {
         std::string dialogue = "It's not very effective...";
-        battleUI.dialogueBox->SetDialogue(dialogue);
-
-        WaitTime(0.5f);
+        actionQueue.push(std::make_unique<BattleTextAction>(
+            dialogue, battleUI.dialogueBox, 1));
     }
 
     if (details.fainted)
     {
         if (isPlayerAttacking)
-            PlayerPokemonFainted(target);
+            PlayerPokemonFainted(targetPokemon);
         else
-            EnemyPokemonFainted(target);
+            EnemyPokemonFainted(targetPokemon);
     }
 }
 
 void Battle::PlayerPokemonFainted(Pokemon& faintedPokemon)
 {
     std::string dialogue = faintedPokemon.species->name + " fainted!";
-    battleUI.dialogueBox->SetDialogue(dialogue);
-
-    WaitTime(2.0f);
+    actionQueue.push(std::make_unique<BattleTextAction>(
+        dialogue, battleUI.dialogueBox, 2.0f));
 
     for (auto& pokemon : playerParty)
     {
@@ -177,9 +205,8 @@ void Battle::PlayerPokemonFainted(Pokemon& faintedPokemon)
 void Battle::EnemyPokemonFainted(Pokemon& faintedPokemon)
 {
     std::string dialogue = "Enemy " + faintedPokemon.species->name + " fainted!";
-    battleUI.dialogueBox->SetDialogue(dialogue);
-
-    WaitTime(2.0f);
+    actionQueue.push(std::make_unique<BattleTextAction>(
+        dialogue, battleUI.dialogueBox, 2.0f));
 
     //Give exp, check for level up, etc.
 
@@ -252,25 +279,25 @@ void Battle::RunButtonClick()
 
 void Battle::Attack1ButtonClick()
 {
-    DamageHandling(*playerUnit.GetPokemon(), *enemyUnit.GetPokemon(), 
+    DamageHandling(playerUnit, enemyUnit, 
         playerUnit.GetPokemon()->moves[0], true);
 }
 
 void Battle::Attack2ButtonClick()
 {
-    DamageHandling(*playerUnit.GetPokemon(), *enemyUnit.GetPokemon(), 
+    DamageHandling(playerUnit, enemyUnit, 
         playerUnit.GetPokemon()->moves[1], true);
 }
 
 void Battle::Attack3ButtonClick()
 {
-    DamageHandling(*playerUnit.GetPokemon(), *enemyUnit.GetPokemon(), 
+    DamageHandling(playerUnit, enemyUnit, 
         playerUnit.GetPokemon()->moves[2], true);
 }
 
 void Battle::Attack4ButtonClick()
 {
-    DamageHandling(*playerUnit.GetPokemon(), *enemyUnit.GetPokemon(), 
+    DamageHandling(playerUnit, enemyUnit, 
         playerUnit.GetPokemon()->moves[3], true);
 }
 
