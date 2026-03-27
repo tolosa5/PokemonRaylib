@@ -20,16 +20,15 @@ public:
     BattleUnit& enemyUnit;
 
     Font font;
-    Rectangle playerHudRect;
-    Rectangle enemyHudRect;
+    
     Rectangle textBox;
+    Rectangle actionSelectionBox;
     Rectangle attackSelectionBox;
 
-    Texture2D playerHudTexture;
-    Texture2D enemyHudTexture;
     Texture2D buttonBaseTexture;
     Texture2D buttonHoverTexture;
     Texture2D textBoxTexture;
+    Texture2D actionSelectionTexture;
     Texture2D attackSelectionBoxTexture;
 
     BattleUI(Battle& battle, Font font, 

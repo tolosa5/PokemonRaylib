@@ -3,12 +3,16 @@
 
 #include "raylib.h"
 #include "src/core/pokemonCore/Pokemon.hpp"
+#include "BattleHud.hpp"
+#include "src/components/AnimationComponent.hpp"
 #include "src/components/Sprite.hpp"
 
 class BattleUnit
 {
 private:
     Pokemon* pokemon;
+    AnimationComponent* animationComponent;
+    BattleHud hud;
     bool isPlayer;
     bool active;
 
@@ -24,6 +28,11 @@ public:
 
     void SetUp(Pokemon* pokemon, bool isPlayer);
     void BattleStart();
+    void CreateAnimationComponent(
+        Texture2D& textureSheet, int frameWidth, 
+        int frameHeight);
+        
+    void LoadAnimations();
     void SetActive(bool active) { this->active = active; }
     void Draw();
 

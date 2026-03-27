@@ -22,9 +22,6 @@ void Battle::BattleStart()
     playerUnit.SetUp(&this->playerParty[0], true);
     enemyUnit.SetUp(&this->enemyParty[0], false);
 
-    battleUI.playerHud.SetData(playerUnit, battleUI.playerHudRect);
-    battleUI.enemyHud.SetData(enemyUnit, battleUI.enemyHudRect);
-
     playerUnit.SetActive(false);
     enemyUnit.SetActive(true);
 
@@ -100,7 +97,6 @@ void Battle::HandleEnemyTurn(Move selectedMove)
         " used " + moveData.name + "!";
     battleUI.dialogueBox->SetDialogue(dialogue);
 
-    currentDamageState = DamageState::START_ATTACK;
     DamageHandling(enemyUnit, playerUnit, selectedMove, false);
 }
 
@@ -117,6 +113,7 @@ void Battle::ChangePokemon(Pokemon& newPokemon)
 void Battle::EnemyLosePokemon()
 {
     std::vector<Pokemon>& aliveEnemyParty = enemyParty;
+
     aliveEnemyParty.erase(
         std::remove_if(aliveEnemyParty.begin(), aliveEnemyParty.end(),
             [](const Pokemon& pokemon)

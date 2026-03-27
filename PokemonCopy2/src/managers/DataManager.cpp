@@ -2,6 +2,7 @@
 #include "src/core/pokemonCore/Pokemon.hpp"
 #include "src/core/pokemonCore/PokemonSpecies.hpp"
 #include "src/core/pokemonCore/MoveData.hpp"
+#include <unordered_set>
 
 DataManager::DataManager() = default;
 
@@ -22,7 +23,10 @@ void DataManager::LoadMoveData(const std::string& filePath)
         MoveData moveData;
         
         moveData.id = value["id"];
-        moveData.name = value["ename"];
+        if (value.contains("ename"))
+            moveData.name = value["ename"];
+        else
+            moveData.name = value["name"];
         moveData.type = StringToType(value["type"]);
         moveData.power = value["power"];
         moveData.accuracy = value["accuracy"];
@@ -57,14 +61,55 @@ void DataManager::LoadPokemonSpeciesData(const std::string& filePath)
         species.baseStats.specialDefense = value["base"]["Sp. Defense"];
         species.baseStats.speed = value["base"]["Speed"];
 
-        /*
-        // not working, learnableMoves is empty
-        for (const auto& moveId : value["learnableMoves"])
+        species.frontSprite = LoadTexture(("assets/sprites/pokemon/front/" + 
+            std::to_string(species.id) + ".png").c_str());
+        species.backSprite = LoadTexture(("assets/sprites/pokemon/back/" + 
+            std::to_string(species.id) + ".png").c_str());
+        species.spriteSheet = LoadTexture(("assets/sprites/pokemon/sheets/" + 
+            std::to_string(species.id) + ".png").c_str());
+
+        std::unordered_set<int> addedMoveIds;
+        const json& learnableMoves = value["learnableMoves"];
+
+        if (learnableMoves.contains("levelUp") && 
+            learnableMoves["levelUp"].is_array())
         {
-            const MoveData& moveData = GetMoveById(moveId);
-            species.learnableMoves.push_back(moveData);
+            for (const auto& levelEntry : learnableMoves["levelUp"])
+            {
+                int moveId = -1;
+
+                if (levelEntry.is_object() && levelEntry.contains("moveId"))
+                    moveId = levelEntry["moveId"].get<int>();
+                else if (levelEntry.is_number_integer())
+                    moveId = levelEntry.get<int>();
+
+                if (moveId >= 0 && addedMoveIds.insert(moveId).second)
+                {
+                    const MoveData& moveData = GetMoveById(moveId);
+                    species.learnableMovesLvl[moveData] = 
+                        levelEntry["level"].get<int>();
+                }
+            }
         }
-        */
+        else if (learnableMoves.contains("TM") && 
+            learnableMoves["TM"].is_array())
+        {
+            for (const auto& levelEntry : learnableMoves["TM"])
+            {
+                int moveId = -1;
+
+                if (levelEntry.is_object() && levelEntry.contains("moveId"))
+                    moveId = levelEntry["moveId"].get<int>();
+                else if (levelEntry.is_number_integer())
+                    moveId = levelEntry.get<int>();
+
+                if (moveId >= 0 && addedMoveIds.insert(moveId).second)
+                {
+                    const MoveData& moveData = GetMoveById(moveId);
+                    species.learnableMovesTM.push_back(moveData);
+                }
+            }
+        }
 
         pokemonSpeciesMap[species.id] = species;
     }
@@ -89,15 +134,13 @@ Pokemon* DataManager::CreatePokemon(int speciesId, int level)
     Pokemon* pokemon = new Pokemon(const_cast<PokemonSpecies*>(&species), level);
     pokemon->CalculateStats();
 
-    if (species.learnableMoves.empty())
+    if (species.learnableMovesLvl.empty())
         return pokemon;
     
-    for (size_t i = 0; i < 4 && i < species.learnableMoves.size(); ++i)
+    for (const auto& [moveData, learnLevel] : species.learnableMovesLvl)
     {
-        const MoveData& moveData = GetMoveById(species.learnableMoves[i].id);
-        
-        Move moveInstance = Move(&moveData);
-        pokemon->moves.push_back(moveInstance);
+        if (learnLevel <= level)
+            pokemon->moves.emplace_back(moveData);
     }
 
     return pokemon;

@@ -8,7 +8,9 @@ class BattleHud
 {
 public:
     BattleUnit* unit;
-    Rectangle hud;
+    Rectangle rect;
+
+    Texture2D hudTexture;
 
     std::string nameText;
     std::string levelText;
@@ -16,6 +18,7 @@ public:
     std::string maxHpText;
 
     void SetData(BattleUnit& unit, Rectangle& hud);
+    void Draw();
 };
 
 #endif

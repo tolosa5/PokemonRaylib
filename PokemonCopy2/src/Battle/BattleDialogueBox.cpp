@@ -13,20 +13,20 @@ BattleDialogueBox::~BattleDialogueBox()
 
 void BattleDialogueBox::Update()
 {
-    if (active)
-    {
-        /* code */
-    }
+    if (!active)
+        return;
+
+    
 }
 
 void BattleDialogueBox::Draw()
 {
-    if (active)
-    {
-        DrawTexture(textBoxTexture, textBox.x, textBox.y, WHITE);
-        if (currentDialogue != "")
-            DrawTextEx(font, currentDialogue.c_str(), { 50, 350 }, 20, 5, BLACK);
-    }
+    if (!active)
+        return;
+
+    DrawTexture(textBoxTexture, textBox.x, textBox.y, WHITE);
+    if (currentDialogue != "")
+        DrawTextEx(font, currentDialogue.c_str(), { 50, 350 }, 20, 5, BLACK);
 }
 
 void BattleDialogueBox::SetDialogue(const std::string &dialogue)

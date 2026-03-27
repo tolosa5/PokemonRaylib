@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <map>
 #include "TypeSystem.hpp"
 #include "Stats.hpp"
 #include "Move.hpp"
@@ -16,7 +17,12 @@ public:
     Type type1;
     Type type2;
     Stats baseStats;
-    std::vector<MoveData> learnableMoves;
+    std::map<MoveData, int> learnableMovesLvl;
+    std::vector<MoveData> learnableMovesTM;
+    
+    Texture2D frontSprite;
+    Texture2D backSprite;
+    Texture2D spriteSheet;
 };
 
 #endif

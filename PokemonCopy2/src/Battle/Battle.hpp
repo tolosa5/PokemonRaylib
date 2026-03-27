@@ -46,14 +46,6 @@ enum class PlayerAction
     TURN
 };
 
-enum class DamageState
-{
-    START_ATTACK,
-    DAMAGE_ANIMATION,
-    DAMAGE_TEXTS,
-    END
-};
-
 class Battle
 {
 public:
@@ -76,7 +68,6 @@ public:
     BattleFlowState currentBattleState;
     BattleType currentBattleType;
     PlayerAction currentPlayerAction;
-    DamageState currentDamageState;
 
     std::vector<Pokemon> playerParty;
     std::vector<Pokemon> enemyParty;
